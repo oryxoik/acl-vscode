@@ -10,16 +10,29 @@
     "Programming Languages"
   ],
   "contributes": {
-    "languages": [{
-      "id": "acl",
-      "aliases": ["CustomLogic", "acl"],
-      "extensions": [".acl"],
-      "configuration": "./language-configuration.json"
-    }],
-    "grammars": [{
-      "language": "acl",
-      "scopeName": "source.acl",
-      "path": "./syntaxes/acl.tmLanguage.json"
-    }]
+    "languages": [
+      {
+        "id": "acl",
+        "aliases": [
+          "CustomLogic",
+          "acl"
+        ],
+        "extensions": [
+          ".acl"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "acl",
+        "scopeName": "source.acl",
+        "path": "./syntaxes/acl.tmLanguage.json"
+      }
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ikr2202/acl-vscode"
   }
 }
