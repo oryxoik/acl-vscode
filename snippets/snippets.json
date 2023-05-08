@@ -1,0 +1,192 @@
+{
+  "Game.Print()": {
+    "prefix": "print",
+    "body": ["Game.Print(${1});"],
+    "description": "Game.Print()"
+  },
+  "for loop": {
+    "prefix": "for",
+    "body": [
+      "for(${1:i} in Range(${2:0}, ${3:10}, ${4:1}))",
+      "{",
+      "    $0",
+      "}"
+    ],
+    "description": "for loop"
+  },
+  "for each": {
+    "prefix": "foreach",
+    "body": ["for(${1:i} in ${2:list})", "{", "    $0", "}"],
+    "description": "for each"
+  },
+  "class": {
+    "prefix": "class",
+    "body": ["class ${1:Main}", "{", "    $0", "}"],
+    "description": "class"
+  },
+  "Init": {
+    "prefix": "Init()",
+    "body": ["function Init()", "{", "    $0", "}"],
+    "description": "Init"
+  },
+  "OnGameStart": {
+    "prefix": "OnGameStart()",
+    "body": ["function OnGameStart()", "{", "    $0", "}"],
+    "description": "OnGameStart"
+  },
+  "OnTick": {
+    "prefix": "OnTick()",
+    "body": ["function OnTick()", "{", "    $0", "}"],
+    "description": "OnTick"
+  },
+  "OnFrame": {
+    "prefix": "OnFrame()",
+    "body": ["function OnFrame()", "{", "    $0", "}"],
+    "description": "OnFrame"
+  },
+  "OnSecond": {
+    "prefix": "OnSecond()",
+    "body": ["function OnSecond()", "{", "    $0", "}"],
+    "description": "OnSecond"
+  },
+  "OnChatInput": {
+    "prefix": "OnChatInput()",
+    "body": ["function OnChatInput(${1:message})", "{", "    $0", "}"],
+    "description": "OnChatInput"
+  },
+  "OnPlayerSpawn": {
+    "prefix": "OnPlayerSpawn()",
+    "body": [
+      "function OnPlayerSpawn(${1:player}, ${2:character})",
+      "{",
+      "    $0",
+      "}"
+    ],
+    "description": "OnPlayerSpawn"
+  },
+  "OnCharacterDie": {
+    "prefix": "OnCharacterDie()",
+    "body": [
+      "function OnCharacterDie(${1:victim}, ${2:killer}, ${3:killerName})",
+      "{",
+      "    $0",
+      "}"
+    ],
+    "description": "OnCharacterDie"
+  },
+  "OnCharacterDamaged": {
+    "prefix": "OnCharacterDamaged()",
+    "body": [
+      "function OnCharacterDamaged(${1:victim}, ${2:killer}, ${3:killerName})",
+      "{",
+      "    $0",
+      "}"
+    ],
+    "description": "OnCharacterDamaged"
+  },
+  "OnPlayerJoin": {
+    "prefix": "OnPlayerJoin()",
+    "body": ["function OnPlayerJoin(${1:player})", "{", "    $0", "}"],
+    "description": "OnPlayerJoin"
+  },
+  "OnPlayerLeave": {
+    "prefix": "OnPlayerLeave()",
+    "body": ["function OnPlayerLeave(${1:player})", "{", "    $0", "}"],
+    "description": "OnPlayerLeave"
+  },
+  "OnNetworkMessage": {
+    "prefix": "OnNetworkMessage()",
+    "body": [
+      "function OnNetworkMessage(${1:sender}, ${2:message})",
+      "{",
+      "    $0",
+      "}"
+    ],
+    "description": "OnNetworkMessage"
+  },
+  "OnCollisionEnter": {
+    "prefix": "OnCollisionEnter()",
+    "body": ["function OnCollisionEnter(${1:other})", "{", "    $0", "}"],
+    "description": "OnCollisionEnter"
+  },
+  "OnCollisionStay": {
+    "prefix": "OnCollisionStay()",
+    "body": ["function OnCollisionStay(${1:other})", "{", "    $0", "}"],
+    "description": "OnCollisionStay"
+  },
+  "OnCollisionExit": {
+    "prefix": "OnCollisionExit()",
+    "body": ["function OnCollisionExit(${1:other})", "{", "    $0", "}"],
+    "description": "OnCollisionExit"
+  },
+  "OnGetHit": {
+    "prefix": "OnGetHit()",
+    "body": [
+      "function OnGetHit(${1:character}, ${2:name}, ${3:damage}, ${4:type})",
+      "{",
+      "    $0",
+      "}"
+    ],
+    "description": "OnGetHit"
+  },
+  "OnNetworkTransfer": {
+    "prefix": "OnNetworkTransfer()",
+    "body": [
+      "function OnNetworkTransfer(${1:oldOwner}, ${2:newOwner})",
+      "{",
+      "    $0",
+      "}"
+    ],
+    "description": "OnNetworkTransfer"
+  },
+  "SendNetworkStream": {
+    "prefix": "SendNetworkStream()",
+    "body": ["function SendNetworkStream()", "{", "    $0", "}"],
+    "description": "SendNetworkStream"
+  },
+  "OnNetworkStream": {
+    "prefix": "OnNetworkStream()",
+    "body": ["function OnNetworkStream()", "{", "    $0", "}"],
+    "description": "OnNetworkStream"
+  },
+  "while": {
+    "prefix": "while",
+    "body": ["while(${1})", "{", "    $0", "}"],
+    "description": "while"
+  },
+  "function": {
+    "prefix": "function",
+    "body": ["function ${1:name}(${2})", "{", "    $0", "}"],
+    "description": "function"
+  },
+  "coroutine": {
+    "prefix": "coroutine",
+    "body": ["coroutine ${1:name}(${2})", "{", "    $0", "}"],
+    "description": "coroutine"
+  },
+  "extension": {
+    "prefix": "extension",
+    "body": ["extension ${1:name}", "{", "    $0", "}"],
+    "description": "extension"
+  },
+  "cutscene": {
+    "prefix": "cutscene",
+    "body": ["cutscene ${1:name}", "{", "    $0", "}"],
+    "description": "cutscene"
+  },
+  "Convert.ToString": {
+    "prefix": "ToString()",
+    "body": ["$0Convert.ToString(${1});"],
+    "description": "Convert.ToString"
+  },
+  "Random.RandomFloat": {
+    "prefix": "RandomFloat()",
+    "body": ["$0Random.RandomFloat(${1:0}, ${2:10});"],
+    "description": "Random.RandomFloat"
+  },
+  "Map.FindMapObjectByName": {
+    "prefix": "FindMapObjectByName()",
+    "body": ["$0Map.FindMapObjectByName(\"${1:0}\");"],
+    "description": "Map.FindMapObjectByName"
+  }
+}

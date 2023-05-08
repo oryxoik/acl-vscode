@@ -29,6 +29,12 @@
         "scopeName": "source.acl",
         "path": "./syntaxes/acl.tmLanguage.json"
       }
+    ],
+    "snippets": [
+      {
+        "language": "acl",
+        "path": "./snippets/snippets.json"
+      }
     ]
   },
   "repository": {
