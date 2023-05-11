@@ -9,7 +9,14 @@
   "categories": [
     "Programming Languages"
   ],
+  "main": "./out/extension.js",
   "contributes": {
+    "commands": [
+      {
+        "command": "experiment.helloWorld",
+        "title": "Hello World"
+      }
+    ],
     "languages": [
       {
         "id": "acl",
@@ -40,5 +47,21 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/ikr2202/acl-vscode"
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^8.1.0"
+  },
+  "devDependencies": {
+    "@types/vscode": "1.78.0",
+    "@types/node": "16.x",
+    "typescript": "^5.0.4"
   }
 }
