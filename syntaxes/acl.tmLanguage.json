@@ -51,6 +51,9 @@
           "include": "#class-identifier"
         },
         {
+          "include": "#builtin-types"
+        },
+        {
           "include": "#function-identifier"
         }
       ]
@@ -62,6 +65,10 @@
           "name": "storage.type.primitive.acl"
         }
       ]
+    },
+    "builtin-types": {
+      "match": "(?<!\\$)\\b(Game|Network|Map|UI|Time|Convert|String|Input|Math|Random|Cutscene|Vector3|Color|Range|List|Dict)\\b(?!\\$)",
+      "name": "entity.name.type.class"
     },
     "function-identifier": {
       "patterns": [
