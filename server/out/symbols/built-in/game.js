@@ -5,8 +5,8 @@ const vscode_languageserver_types_1 = require("vscode-languageserver-types");
 exports.gameSymbols = {
     name: "Game",
     kind: vscode_languageserver_types_1.CompletionItemKind.Class,
-    detail: "None",
-    description: "None",
+    detail: "extension Game",
+    description: "Game functions such as spawning titans and managing game state.",
     subSymbols: [
         {
             name: "IsEnding",

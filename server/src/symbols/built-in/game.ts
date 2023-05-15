@@ -4,8 +4,9 @@ import { BaseSymbolType } from "../symbols";
 export const gameSymbols: BaseSymbolType = {
   name: "Game",
   kind: CompletionItemKind.Class,
-  detail: "None",
-  description: "None",
+  detail: "extension Game",
+  description:
+    "Game functions such as spawning titans and managing game state.",
   subSymbols: [
     {
       name: "IsEnding",
