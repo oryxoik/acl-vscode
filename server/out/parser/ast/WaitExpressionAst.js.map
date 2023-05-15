@@ -1,0 +1,1 @@
+{"version":3,"file":"WaitExpressionAst.js","sourceRoot":"","sources":["../../../src/parser/ast/WaitExpressionAst.ts"],"names":[],"mappings":";;;AACA,uCAAoC;AACpC,2DAAwD;AAExD,MAAa,iBAAkB,SAAQ,qCAAiB;IAGtD,YAAY,QAA2B,EAAE,KAAY;QACnD,KAAK,CAAC,iBAAO,CAAC,cAAc,EAAE,KAAK,CAAC,CAAC;QACrC,IAAI,CAAC,QAAQ,GAAG,QAAQ,CAAC;IAC3B,CAAC;CACF;AAPD,8CAOC"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"VariableExpressionAst.js","sourceRoot":"","sources":["../../../src/parser/ast/VariableExpressionAst.ts"],"names":[],"mappings":";;;AACA,uCAAoC;AACpC,2DAAwD;AAExD,MAAa,qBAAsB,SAAQ,qCAAiB;IAG1D,YAAY,IAAY,EAAE,KAAY;QACpC,KAAK,CAAC,iBAAO,CAAC,kBAAkB,EAAE,KAAK,CAAC,CAAC;QACzC,IAAI,CAAC,IAAI,GAAG,IAAI,CAAC;IACnB,CAAC;CACF;AAPD,sDAOC"}

@@ -1,13 +1,10 @@
 import {
   createConnection,
   TextDocuments,
-  Diagnostic,
-  DiagnosticSeverity,
   ProposedFeatures,
   InitializeParams,
   DidChangeConfigurationNotification,
   CompletionItem,
-  CompletionItemKind,
   TextDocumentPositionParams,
   TextDocumentSyncKind,
   InitializeResult,
@@ -16,6 +13,7 @@ import {
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { DocumentSettings } from "./settings";
 import { validateTextDocument } from "./analysis/analyzer";
+import { SubSymbolType, symbols } from "./symbols/symbols";
 
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -48,9 +46,9 @@ connection.onInitialize((params: InitializeParams) => {
   const result: InitializeResult = {
     capabilities: {
       textDocumentSync: TextDocumentSyncKind.Incremental,
-      // Tell the client that this server supports code completion.
       completionProvider: {
         resolveProvider: true,
+        triggerCharacters: ["."],
       },
     },
   };
@@ -102,42 +100,59 @@ documents.onDidChangeContent((change) => {
   );
 });
 
-connection.onDidChangeWatchedFiles((_change) => {
-  // Monitored files have change in VSCode
-  connection.console.log("We received an file change event");
-});
-
 // This handler provides the initial list of the completion items.
 connection.onCompletion(
   (_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
-    // The pass parameter contains the position of the text document in
-    // which code complete got requested. For the example we ignore this
-    // info and always provide the same completion items.
-    return [
-      {
-        label: "Game",
-        kind: CompletionItemKind.Class,
-        data: 1,
-      },
-      {
-        label: "JavaScript",
-        kind: CompletionItemKind.Property,
-        data: 2,
-      },
-    ];
+    // Get the text document and position information from the parameters
+    const { textDocument, position } = _textDocumentPosition;
+    const { line, character } = position;
+
+    // Split the document into lines
+    const text = documents.get(textDocument.uri)?.getText() ?? "";
+    const lines = text.split("\n");
+
+    // Analyze the code around the cursor position
+    const currentLine = lines[line];
+    const lineBeforeCursor = currentLine.substring(0, character);
+
+    let completionItems: CompletionItem[] = [];
+
+    let subSymbols = false;
+    let currentSymbol: SubSymbolType[] = [];
+    symbols.forEach((symbol) => {
+      if (lineBeforeCursor.endsWith(`${symbol.name}.`)) {
+        subSymbols = true;
+        currentSymbol = symbol.subSymbols;
+      }
+    });
+    if (subSymbols) {
+      completionItems = [];
+      currentSymbol.forEach((symbol) => {
+        completionItems.push({
+          label: symbol.name,
+          kind: symbol.kind,
+          detail: symbol.detail,
+          documentation: symbol.description,
+        });
+      });
+    } else {
+      completionItems = [];
+      symbols.forEach((symbol) => {
+        completionItems.push({
+          label: symbol.name,
+          kind: symbol.kind,
+          detail: symbol.detail,
+          documentation: symbol.description,
+          commitCharacters: ["."],
+        });
+      });
+    }
+
+    return completionItems;
   }
 );
 
-// This handler resolves additional information for the item selected in
-// the completion list.
 connection.onCompletionResolve((item: CompletionItem): CompletionItem => {
-  if (item.data === 1) {
-    item.detail = "TypeScript details";
-    item.documentation = "TypeScript documentation";
-  } else if (item.data === 2) {
-    item.detail = "JavaScript details";
-    item.documentation = "JavaScript documentation";
-  }
   return item;
 });
 

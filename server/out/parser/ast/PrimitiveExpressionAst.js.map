@@ -1,0 +1,1 @@
+{"version":3,"file":"PrimitiveExpressionAst.js","sourceRoot":"","sources":["../../../src/parser/ast/PrimitiveExpressionAst.ts"],"names":[],"mappings":";;;AACA,uCAAoC;AACpC,2DAAwD;AAExD,MAAa,sBAAuB,SAAQ,qCAAiB;IAG3D,YAAY,KAAU,EAAE,KAAY;QAClC,KAAK,CAAC,iBAAO,CAAC,mBAAmB,EAAE,KAAK,CAAC,CAAC;QAC1C,IAAI,CAAC,KAAK,GAAG,KAAK,CAAC;IACrB,CAAC;CACF;AAPD,wDAOC"}
