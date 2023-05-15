@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const node_1 = require("vscode-languageserver/node");
 const vscode_languageserver_textdocument_1 = require("vscode-languageserver-textdocument");
 const settings_1 = require("./settings");
-const analyzer_1 = require("./analysis/analyzer");
 const symbols_1 = require("./symbols/symbols");
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -54,7 +53,6 @@ connection.onInitialized(() => {
 let settings = new settings_1.DocumentSettings(hasConfigurationCapability);
 connection.onDidChangeConfiguration((change) => {
     settings.onDidChangeConfiguration(change);
-    documents.all().forEach(() => analyzer_1.validateTextDocument);
 });
 // Only keep settings for open documents
 documents.onDidClose((e) => {
@@ -62,9 +60,7 @@ documents.onDidClose((e) => {
 });
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
-documents.onDidChangeContent((change) => {
-    (0, analyzer_1.validateTextDocument)(connection, settings, change.document, hasDiagnosticRelatedInformationCapability);
-});
+documents.onDidChangeContent((change) => { });
 // This handler provides the initial list of the completion items.
 connection.onCompletion((_textDocumentPosition) => {
     // Get the text document and position information from the parameters

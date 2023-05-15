@@ -12,7 +12,6 @@ import {
 
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { DocumentSettings } from "./settings";
-import { validateTextDocument } from "./analysis/analyzer";
 import { SubSymbolType, symbols } from "./symbols/symbols";
 
 // Create a connection for the server, using Node's IPC as a transport.
@@ -81,7 +80,6 @@ let settings = new DocumentSettings(hasConfigurationCapability);
 
 connection.onDidChangeConfiguration((change) => {
   settings.onDidChangeConfiguration(change);
-  documents.all().forEach(() => validateTextDocument);
 });
 
 // Only keep settings for open documents
@@ -91,14 +89,7 @@ documents.onDidClose((e) => {
 
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
-documents.onDidChangeContent((change) => {
-  validateTextDocument(
-    connection,
-    settings,
-    change.document,
-    hasDiagnosticRelatedInformationCapability
-  );
-});
+documents.onDidChangeContent((change) => {});
 
 // This handler provides the initial list of the completion items.
 connection.onCompletion(
