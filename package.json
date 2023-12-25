@@ -3,6 +3,7 @@
   "displayName": "Aottg Custom Logic",
   "description": "Syntax highlighting for Aottg CustomLogic",
   "version": "0.0.1",
+  "main": "./extension/out/extension.js",
   "engines": {
     "vscode": "^1.78.0"
   },
@@ -40,5 +41,19 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/oryxoik/acl-vscode"
+  },
+  "scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -b",
+		"watch": "tsc -b -w",
+		"lint": "eslint ./client/src ./server/src --ext .ts,.tsx",
+		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
+		"test": "sh ./scripts/e2e.sh"
+	},
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.10.4",
+    "mocha": "^10.2.0",
+    "typescript": "^5.3.3"
   }
 }
