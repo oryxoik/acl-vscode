@@ -20,6 +20,7 @@ export default class Lexer {
     this._keywords.set("extension", TokenType.Extension);
     this._keywords.set("function", TokenType.Function);
     this._keywords.set("coroutine", TokenType.Coroutine);
+    this._keywords.set("self", TokenType.Self);
     this._keywords.set("wait", TokenType.Wait);
     this._keywords.set("null", TokenType.Null);
     this._keywords.set("return", TokenType.Return);
@@ -86,12 +87,16 @@ export default class Lexer {
           this.match("=") ? TokenType.BangEqual : TokenType.Bang
         );
         break;
-        case "&":
-          this.addEmptyToken(this.match("&") ? TokenType.AmpersandAmpersand : TokenType.Ampersand);
-          break;
-          case "|":
-          this.addEmptyToken(this.match("|") ? TokenType.PipePipe : TokenType.Pipe);
-          break;
+      case "&":
+        this.addEmptyToken(
+          this.match("&") ? TokenType.AmpersandAmpersand : TokenType.Ampersand
+        );
+        break;
+      case "|":
+        this.addEmptyToken(
+          this.match("|") ? TokenType.PipePipe : TokenType.Pipe
+        );
+        break;
       case "=":
         this.addEmptyToken(
           this.match("=") ? TokenType.EqualEqual : TokenType.Equal

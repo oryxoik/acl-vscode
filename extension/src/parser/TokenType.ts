@@ -36,6 +36,8 @@ export enum TokenType {
   Component,
   Extension,
 
+  Self,
+
   Function,
   Coroutine,
 
