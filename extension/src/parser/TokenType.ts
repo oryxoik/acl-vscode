@@ -11,7 +11,6 @@ export enum TokenType {
   Plus,
   Star,
   Slash,
-  Hashtag,
   Ampersand,
   AmpersandAmpersand,
   Pipe,

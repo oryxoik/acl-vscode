@@ -79,8 +79,8 @@ export default class Lexer {
       case "*":
         this.addEmptyToken(TokenType.Star);
         break;
-      case "#":
-        this.addEmptyToken(TokenType.Hashtag);
+      case "/":
+        this.addEmptyToken(TokenType.Slash);
         break;
       case "!":
         this.addEmptyToken(
@@ -112,14 +112,8 @@ export default class Lexer {
           this.match("=") ? TokenType.GreaterEqual : TokenType.Greater
         );
         break;
-      case "/":
-        if (this.match("/")) {
-          // A comment goes until the end of the line.
-          while (this.peek() != "\n" && !this.isAtEnd()) this.advance();
-          this.addEmptyToken(TokenType.Comment);
-        } else {
-          this.addEmptyToken(TokenType.Slash);
-        }
+      case "#":
+        this.comment();
         break;
 
       case " ":
@@ -146,6 +140,26 @@ export default class Lexer {
         }
         break;
     }
+  }
+
+  private comment() {
+    while (this.peek() != "#" && !this.isAtEnd()) {
+      if (this.peek() == "\n") this._line++;
+      this.advance();
+    }
+
+    if (this.isAtEnd()) {
+      console.log(`[${this._line}]: Unterminated comment.`);
+      return;
+    }
+
+    // The closing #.
+    this.advance();
+
+    // Trim the surrounding quotes.
+    const value = this._source.substring(this._start + 1, this._current - 1);
+
+    this.addToken(TokenType.Comment, value);
   }
 
   private identifier() {
