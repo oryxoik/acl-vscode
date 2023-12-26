@@ -40,7 +40,7 @@ export default class Lexer {
       this.scanToken();
     }
     this._tokens.push(
-      new Token(TokenType.Eof, "", null, this._line, this._source.length - 2, 1)
+      new Token(TokenType.Eof, this._line, this._source.length - 2, 1)
     );
     return this._tokens;
   }
@@ -50,65 +50,57 @@ export default class Lexer {
 
     switch (c) {
       case "(":
-        this.addEmptyToken(TokenType.LeftParen);
+        this.addToken(TokenType.LeftParen);
         break;
       case ")":
-        this.addEmptyToken(TokenType.RightParen);
+        this.addToken(TokenType.RightParen);
         break;
       case "{":
-        this.addEmptyToken(TokenType.LeftCurly);
+        this.addToken(TokenType.LeftCurly);
         break;
       case "}":
-        this.addEmptyToken(TokenType.RightCurly);
+        this.addToken(TokenType.RightCurly);
         break;
       case ";":
-        this.addEmptyToken(TokenType.Semicolon);
+        this.addToken(TokenType.Semicolon);
         break;
       case ",":
-        this.addEmptyToken(TokenType.Comma);
+        this.addToken(TokenType.Comma);
         break;
       case ".":
-        this.addEmptyToken(TokenType.Dot);
+        this.addToken(TokenType.Dot);
         break;
       case "-":
-        this.addEmptyToken(TokenType.Minus);
+        this.addToken(TokenType.Minus);
         break;
       case "+":
-        this.addEmptyToken(TokenType.Plus);
+        this.addToken(TokenType.Plus);
         break;
       case "*":
-        this.addEmptyToken(TokenType.Star);
+        this.addToken(TokenType.Star);
         break;
       case "/":
-        this.addEmptyToken(TokenType.Slash);
+        this.addToken(TokenType.Slash);
         break;
       case "!":
-        this.addEmptyToken(
-          this.match("=") ? TokenType.BangEqual : TokenType.Bang
-        );
+        this.addToken(this.match("=") ? TokenType.BangEqual : TokenType.Bang);
         break;
       case "&":
-        this.addEmptyToken(
+        this.addToken(
           this.match("&") ? TokenType.AmpersandAmpersand : TokenType.Ampersand
         );
         break;
       case "|":
-        this.addEmptyToken(
-          this.match("|") ? TokenType.PipePipe : TokenType.Pipe
-        );
+        this.addToken(this.match("|") ? TokenType.PipePipe : TokenType.Pipe);
         break;
       case "=":
-        this.addEmptyToken(
-          this.match("=") ? TokenType.EqualEqual : TokenType.Equal
-        );
+        this.addToken(this.match("=") ? TokenType.EqualEqual : TokenType.Equal);
         break;
       case "<":
-        this.addEmptyToken(
-          this.match("=") ? TokenType.LessEqual : TokenType.Less
-        );
+        this.addToken(this.match("=") ? TokenType.LessEqual : TokenType.Less);
         break;
       case ">":
-        this.addEmptyToken(
+        this.addToken(
           this.match("=") ? TokenType.GreaterEqual : TokenType.Greater
         );
         break;
@@ -155,11 +147,7 @@ export default class Lexer {
 
     // The closing #.
     this.advance();
-
-    // Trim the surrounding quotes.
-    const value = this._source.substring(this._start + 1, this._current - 1);
-
-    this.addToken(TokenType.Comment, value);
+    this.addToken(TokenType.Comment);
   }
 
   private identifier() {
@@ -177,7 +165,7 @@ export default class Lexer {
       tokenType = TokenType.Identifier;
     }
 
-    this.addEmptyToken(tokenType);
+    this.addToken(tokenType);
   }
 
   private number() {
@@ -211,9 +199,7 @@ export default class Lexer {
     this.advance();
 
     // Trim the surrounding quotes.
-    const value = this._source.substring(this._start + 1, this._current - 1);
-
-    this.addToken(TokenType.String, value);
+    this.addToken(TokenType.String, this._current - 1 - (this._start + 1));
   }
 
   private match(expectedChar: string): boolean {
@@ -259,15 +245,8 @@ export default class Lexer {
     return this._current >= this._source.length;
   }
 
-  private addEmptyToken(type: TokenType) {
-    this.addToken(type, null);
-  }
-
-  private addToken(type: TokenType, literal: any) {
-    const text = this._source.substring(this._start, this._current);
-    const length = this._current - this._start;
-    this._tokens.push(
-      new Token(type, text, literal, this._line, this._start, length)
-    );
+  private addToken(type: TokenType, length: number | null = null) {
+    if (length === null) length = this._current - this._start;
+    this._tokens.push(new Token(type, this._line, this._start, length));
   }
 }
