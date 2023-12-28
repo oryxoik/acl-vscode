@@ -9,6 +9,7 @@ import {
   handleExtensionActive,
   typeDeclarationsMap,
 } from "./TokenCache";
+import { provideCodeCompletion } from "./CompletionProvider";
 
 export function activate(context: vscode.ExtensionContext) {
   console.log("Congratulations, your extension is now active!");
@@ -19,7 +20,8 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.workspace.onDidChangeTextDocument(handleDocumentChange),
     vscode.workspace.onDidSaveTextDocument(handleDocumentSave),
     vscode.workspace.onDidOpenTextDocument(handleDocumentOpen),
-    provideSemanticTokens(typeDeclarationsMap)
+    provideSemanticTokens(typeDeclarationsMap),
+    provideCodeCompletion(typeDeclarationsMap)
   );
 
   // const start = performance.now();

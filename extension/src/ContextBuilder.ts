@@ -1,4 +1,5 @@
 import { FunctionDeclaration } from "./FunctionDeclaration";
+import { IdentifierToken } from "./IdentifierToken";
 import { TypeDeclaration } from "./TypeDeclaration";
 import { Token } from "./parser/Token";
 import { TokenType } from "./parser/TokenType";
@@ -30,8 +31,7 @@ export class ContextBuilder {
         const idToken = this._tokens[i + 1];
         currentType = new TypeDeclaration(
           currentToken.type,
-          this.getLexeme(idToken),
-          idToken
+          new IdentifierToken(this.getLexeme(idToken), idToken)
         );
         types.push(currentType);
       }
@@ -41,10 +41,10 @@ export class ContextBuilder {
         this.match(i, 1, TokenType.Identifier)
       ) {
         const idToken = this._tokens[i + 1];
+        const funcLexeme = this.getLexeme(idToken);
         currentFunction = new FunctionDeclaration(
           currentToken.type,
-          this.getLexeme(idToken),
-          idToken
+          new IdentifierToken(funcLexeme, idToken)
         );
         if (
           i + 2 < this._tokens.length &&
@@ -55,11 +55,40 @@ export class ContextBuilder {
             next < this._tokens.length &&
             this._tokens[next].type === TokenType.Identifier
           ) {
-            currentFunction.addVariable(this.getLexeme(this._tokens[next]));
+            currentFunction.addVariable(
+              this.getLexeme(this._tokens[next]),
+              this._tokens[next]
+            );
             next += 2;
           }
         }
-        if (currentType !== null) currentType.Functions.add(currentFunction);
+        if (currentType !== null)
+          currentType.addFunction(funcLexeme, currentFunction);
+      }
+
+      if (
+        currentToken.type === TokenType.Identifier &&
+        this.match(i, 1, TokenType.Equal)
+      ) {
+        const varLexeme = this.getLexeme(currentToken);
+        if (currentFunction !== null) {
+          if (!currentType.Variables.has(varLexeme)) {
+            if (
+              i - 1 >= 0 &&
+              this._tokens[i - 1].type === TokenType.Dot &&
+              i - 2 >= 0 &&
+              this._tokens[i - 2].type === TokenType.Self
+            ) {
+              currentType.addVariable(varLexeme, currentToken);
+            } else currentFunction.addVariable(varLexeme, currentToken);
+          } else {
+            currentFunction.Assignments.push(
+              new IdentifierToken(varLexeme, currentToken)
+            );
+          }
+        } else {
+          currentType.addVariable(varLexeme, currentToken);
+        }
       }
 
       if (currentToken.type === TokenType.LeftCurly) {

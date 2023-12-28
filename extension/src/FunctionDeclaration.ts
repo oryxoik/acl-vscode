@@ -1,22 +1,26 @@
+import { IdentifierToken } from "./IdentifierToken";
 import { Token } from "./parser/Token";
 import { TokenType } from "./parser/TokenType";
 
 export class FunctionDeclaration {
   readonly Type: TokenType;
-  readonly FunctionName: string;
-  readonly FunctionNameToken: Token;
+  readonly Identifier: IdentifierToken;
 
-  readonly Variables: Set<string>;
+  readonly Variables: Map<string, IdentifierToken>;
+  readonly Assignments: IdentifierToken[];
 
-  constructor(type: TokenType, name: string, nameToken: Token) {
+  constructor(type: TokenType, id: IdentifierToken) {
     this.Type = type;
-    this.FunctionName = name;
-    this.FunctionNameToken = nameToken;
-    this.Variables = new Set<string>();
+    this.Identifier = id;
+    this.Variables = new Map<string, IdentifierToken>();
+    this.Assignments = [];
   }
 
-  addVariable(name: string) {
-    if (this.Variables.has(name)) return;
-    this.Variables.add(name);
+  addVariable(name: string, token: Token) {
+    if (this.Variables.has(name)) {
+      this.Assignments.push(new IdentifierToken(name, token));
+      return;
+    }
+    this.Variables.set(name, new IdentifierToken(name, token));
   }
 }
