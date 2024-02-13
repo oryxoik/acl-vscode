@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.workspace.onDidSaveTextDocument(handleDocumentSave),
     vscode.workspace.onDidOpenTextDocument(handleDocumentOpen),
     provideSemanticTokens(typeDeclarationsMap),
-    provideCodeCompletion(typeDeclarationsMap)
+    provideCodeCompletion(typeDeclarationsMap),
   );
 
   // const start = performance.now();

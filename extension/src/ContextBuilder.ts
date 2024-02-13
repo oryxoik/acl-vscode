@@ -1,6 +1,7 @@
 import { FunctionDeclaration } from "./FunctionDeclaration";
 import { IdentifierToken } from "./IdentifierToken";
-import { TypeDeclaration } from "./TypeDeclaration";
+import { MemberAccessExoression, TypeDeclaration } from "./TypeDeclaration";
+import { VariableAssignment } from "./VariableAssignment";
 import { Token } from "./parser/Token";
 import { TokenType } from "./parser/TokenType";
 
@@ -68,6 +69,33 @@ export class ContextBuilder {
 
       if (
         currentToken.type === TokenType.Identifier &&
+        this.match(i, 1, TokenType.Dot) &&
+        this.match(i, 2, TokenType.Identifier)
+      ) {
+        currentType.MemberAccess.push(
+          new MemberAccessExoression(
+            new IdentifierToken(this.getLexeme(currentToken), currentToken),
+            new IdentifierToken(
+              this.getLexeme(this._tokens[i + 2]),
+              this._tokens[i + 2]
+            )
+          )
+        );
+      }
+
+      if (
+        currentToken.type === TokenType.Identifier &&
+        this.match(i, 1, TokenType.LeftParen) &&
+        i - 1 >= 0 &&
+        this._tokens[i - 1].type !== TokenType.Function
+      ) {
+        currentType.CallExpressionIdentifiers.push(
+          new IdentifierToken(this.getLexeme(currentToken), currentToken)
+        );
+      }
+
+      if (
+        currentToken.type === TokenType.Identifier &&
         this.match(i, 1, TokenType.Equal)
       ) {
         const varLexeme = this.getLexeme(currentToken);
@@ -80,10 +108,32 @@ export class ContextBuilder {
               this._tokens[i - 2].type === TokenType.Self
             ) {
               currentType.addVariable(varLexeme, currentToken);
-            } else currentFunction.addVariable(varLexeme, currentToken);
+            } else {
+              const variableAdded = currentFunction.addVariable(
+                varLexeme,
+                currentToken
+              );
+              if (!variableAdded) {
+                let value = "null";
+                if (this.match(i, 2, TokenType.Identifier))
+                  value = this.getLexeme(this._tokens[i + 2]);
+                currentType.VariableAssignments.push(
+                  new VariableAssignment(
+                    new IdentifierToken(varLexeme, currentToken),
+                    value
+                  )
+                );
+              }
+            }
           } else {
-            currentFunction.Assignments.push(
-              new IdentifierToken(varLexeme, currentToken)
+            let value = "null";
+            if (this.match(i, 2, TokenType.Identifier))
+              value = this.getLexeme(this._tokens[i + 2]);
+            currentType.VariableAssignments.push(
+              new VariableAssignment(
+                new IdentifierToken(varLexeme, currentToken),
+                value
+              )
             );
           }
         } else {

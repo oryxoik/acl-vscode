@@ -1,9 +1,10 @@
 import * as vscode from "vscode";
 import { TypeDeclaration } from "./TypeDeclaration";
 import { Token } from "./parser/Token";
+import { TokenType } from "./parser/TokenType";
 
-const tokenTypes = ["class", "interface", "enum", "function", "parameter", "variable"];
-const tokenModifiers = ["declaration", "modification"];
+const tokenTypes = ["class", "function", "parameter", "variable", "property"];
+const tokenModifiers = ["declaration", "modification", "readonly", "static"];
 const legend = new vscode.SemanticTokensLegend(tokenTypes, tokenModifiers);
 
 export function provideSemanticTokens(
@@ -36,6 +37,51 @@ export function provideSemanticTokens(
             );
           });
 
+          type.CallExpressionIdentifiers.forEach(callId => {
+            let isTypeCreation = false;
+            for (let i = 0; i < typeDeclarations.length; i++) {
+              const tdm = typeDeclarations[i];
+              if ((tdm.Type === TokenType.Class || tdm.Type === TokenType.Extension) && callId.Text === tdm.Identifier.Text)
+              {
+                isTypeCreation = true;
+                break;
+              }
+            }
+
+            tokensBuilder.push(
+              getTokenRange(document, callId.Token),
+              isTypeCreation ? "class" : "function",
+              ["readonly"]
+            );
+          });
+
+          type.VariableAssignments.forEach(variable => {
+            tokensBuilder.push(
+              getTokenRange(document, variable.Identifier.Token),
+              "variable",
+              ["modification"]
+            );
+          });
+
+          type.MemberAccess.forEach(m => {
+
+            let isExtension = false;
+            for (let i = 0; i < typeDeclarations.length; i++) {
+              const tdm = typeDeclarations[i];
+              if (tdm.Type === TokenType.Extension && m.Parent.Text === tdm.Identifier.Text)
+              {
+                isExtension = true;
+                break;
+              }
+            }
+
+            tokensBuilder.push(
+              getTokenRange(document, m.Parent.Token),
+              isExtension ? "class" : "property",
+              ["static"]
+            );
+          });
+
           type.Functions.forEach((func) => {
             tokensBuilder.push(
               getTokenRange(document, func.Identifier.Token),
@@ -48,14 +94,6 @@ export function provideSemanticTokens(
                 getTokenRange(document, variable.Token),
                 "parameter",
                 ["declaration"]
-              );
-            });
-
-            func.Assignments.forEach(variable => {
-              tokensBuilder.push(
-                getTokenRange(document, variable.Token),
-                "variable",
-                ["modification"]
               );
             });
           });

@@ -7,20 +7,16 @@ export class FunctionDeclaration {
   readonly Identifier: IdentifierToken;
 
   readonly Variables: Map<string, IdentifierToken>;
-  readonly Assignments: IdentifierToken[];
 
   constructor(type: TokenType, id: IdentifierToken) {
     this.Type = type;
     this.Identifier = id;
     this.Variables = new Map<string, IdentifierToken>();
-    this.Assignments = [];
   }
 
-  addVariable(name: string, token: Token) {
-    if (this.Variables.has(name)) {
-      this.Assignments.push(new IdentifierToken(name, token));
-      return;
-    }
+  addVariable(name: string, token: Token): boolean {
+    if (this.Variables.has(name)) return false;
     this.Variables.set(name, new IdentifierToken(name, token));
+    return true;
   }
 }
