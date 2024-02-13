@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import { Token } from "./parser/Token";
-import { TokenType } from "./parser/TokenType";
+import { Token } from "./lexer/Token";
+import { TokenType } from "./lexer/TokenType";
 import { TypeDeclaration } from "./TypeDeclaration";
 
 let allTokens: Token[] = [];
@@ -78,9 +78,7 @@ export function provideCodeCompletion(
             if (prev.type === TokenType.Self) {
               typesMap.forEach((types) => {
                 types.forEach((type) => {
-                  if (
-                    type.Identifier.Token === typeIdentifier
-                  ) {
+                  if (type.Identifier.Token === typeIdentifier) {
                     found = true;
                     items = [];
                     type.Variables.forEach((variable) => {

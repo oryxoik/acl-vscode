@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import Lexer from "./parser/Lexer";
+import Lexer from "./lexer/Lexer";
 import { ContextBuilder } from "./ContextBuilder";
 import { provideSemanticTokens } from "./SemanticTokensProvider";
 import {
@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.workspace.onDidSaveTextDocument(handleDocumentSave),
     vscode.workspace.onDidOpenTextDocument(handleDocumentOpen),
     provideSemanticTokens(typeDeclarationsMap),
-    provideCodeCompletion(typeDeclarationsMap),
+    provideCodeCompletion(typeDeclarationsMap)
   );
 
   // const start = performance.now();

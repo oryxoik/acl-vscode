@@ -1,8 +1,8 @@
 import { FunctionDeclaration } from "./FunctionDeclaration";
 import { IdentifierToken } from "./IdentifierToken";
 import { VariableAssignment } from "./VariableAssignment";
-import { Token } from "./parser/Token";
-import { TokenType } from "./parser/TokenType";
+import { Token } from "./lexer/Token";
+import { TokenType } from "./lexer/TokenType";
 
 export class TypeDeclaration {
   readonly Type: TokenType;
@@ -40,8 +40,7 @@ export class MemberAccessExoression {
   readonly Parent: IdentifierToken;
   readonly Member: IdentifierToken;
 
-  constructor(parent: IdentifierToken, member: IdentifierToken)
-  {
+  constructor(parent: IdentifierToken, member: IdentifierToken) {
     this.Parent = parent;
     this.Member = member;
   }

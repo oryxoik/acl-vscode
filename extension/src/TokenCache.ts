@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { TypeDeclaration } from "./TypeDeclaration";
-import Lexer from "./parser/Lexer";
+import Lexer from "./lexer/Lexer";
 import { ContextBuilder } from "./ContextBuilder";
 import { mapTokensByLine } from "./CompletionProvider";
 

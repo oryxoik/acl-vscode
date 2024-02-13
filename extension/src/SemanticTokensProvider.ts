@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { TypeDeclaration } from "./TypeDeclaration";
-import { Token } from "./parser/Token";
-import { TokenType } from "./parser/TokenType";
+import { Token } from "./lexer/Token";
+import { TokenType } from "./lexer/TokenType";
 
 const tokenTypes = ["class", "function", "parameter", "variable", "property"];
 const tokenModifiers = ["declaration", "modification", "readonly", "static"];
@@ -29,7 +29,7 @@ export function provideSemanticTokens(
             ["declaration"]
           );
 
-          type.Variables.forEach(variable => {
+          type.Variables.forEach((variable) => {
             tokensBuilder.push(
               getTokenRange(document, variable.Token),
               "variable",
@@ -37,12 +37,15 @@ export function provideSemanticTokens(
             );
           });
 
-          type.CallExpressionIdentifiers.forEach(callId => {
+          type.CallExpressionIdentifiers.forEach((callId) => {
             let isTypeCreation = false;
             for (let i = 0; i < typeDeclarations.length; i++) {
               const tdm = typeDeclarations[i];
-              if ((tdm.Type === TokenType.Class || tdm.Type === TokenType.Extension) && callId.Text === tdm.Identifier.Text)
-              {
+              if (
+                (tdm.Type === TokenType.Class ||
+                  tdm.Type === TokenType.Extension) &&
+                callId.Text === tdm.Identifier.Text
+              ) {
                 isTypeCreation = true;
                 break;
               }
@@ -55,7 +58,7 @@ export function provideSemanticTokens(
             );
           });
 
-          type.VariableAssignments.forEach(variable => {
+          type.VariableAssignments.forEach((variable) => {
             tokensBuilder.push(
               getTokenRange(document, variable.Identifier.Token),
               "variable",
@@ -63,13 +66,14 @@ export function provideSemanticTokens(
             );
           });
 
-          type.MemberAccess.forEach(m => {
-
+          type.MemberAccess.forEach((m) => {
             let isExtension = false;
             for (let i = 0; i < typeDeclarations.length; i++) {
               const tdm = typeDeclarations[i];
-              if (tdm.Type === TokenType.Extension && m.Parent.Text === tdm.Identifier.Text)
-              {
+              if (
+                tdm.Type === TokenType.Extension &&
+                m.Parent.Text === tdm.Identifier.Text
+              ) {
                 isExtension = true;
                 break;
               }
@@ -89,7 +93,7 @@ export function provideSemanticTokens(
               ["declaration"]
             );
 
-            func.Variables.forEach(variable => {
+            func.Variables.forEach((variable) => {
               tokensBuilder.push(
                 getTokenRange(document, variable.Token),
                 "parameter",
