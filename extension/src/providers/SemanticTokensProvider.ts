@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import { TypeDeclaration } from "./TypeDeclaration";
-import { Token } from "./lexer/Token";
-import { TokenType } from "./lexer/TokenType";
+import { TypeDeclaration } from "../context/TypeDeclaration";
+import { Token } from "../lexer/Token";
+import { TokenType } from "../lexer/TokenType";
 
 const tokenTypes = ["class", "function", "parameter", "variable", "property"];
 const tokenModifiers = ["declaration", "modification", "readonly", "static"];

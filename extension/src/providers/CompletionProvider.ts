@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import { Token } from "./lexer/Token";
-import { TokenType } from "./lexer/TokenType";
-import { TypeDeclaration } from "./TypeDeclaration";
+import { Token } from "../lexer/Token";
+import { TokenType } from "../lexer/TokenType";
+import { TypeDeclaration } from "../context/TypeDeclaration";
 
 let allTokens: Token[] = [];
 let tokensMap: Map<number, Token[]> = new Map<number, Token[]>();

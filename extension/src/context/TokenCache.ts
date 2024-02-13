@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 import { TypeDeclaration } from "./TypeDeclaration";
-import Lexer from "./lexer/Lexer";
+import Lexer from "../lexer/Lexer";
 import { ContextBuilder } from "./ContextBuilder";
-import { mapTokensByLine } from "./CompletionProvider";
+import { mapTokensByLine } from "../providers/CompletionProvider";
 
 export let allTypeDeclarations: TypeDeclaration[] = [];
 export const typeDeclarationsMap: Map<string, TypeDeclaration[]> = new Map<

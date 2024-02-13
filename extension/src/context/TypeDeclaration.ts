@@ -1,8 +1,8 @@
 import { FunctionDeclaration } from "./FunctionDeclaration";
 import { IdentifierToken } from "./IdentifierToken";
 import { VariableAssignment } from "./VariableAssignment";
-import { Token } from "./lexer/Token";
-import { TokenType } from "./lexer/TokenType";
+import { Token } from "../lexer/Token";
+import { TokenType } from "../lexer/TokenType";
 
 export class TypeDeclaration {
   readonly Type: TokenType;

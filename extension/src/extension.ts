@@ -1,15 +1,15 @@
 import * as vscode from "vscode";
 import Lexer from "./lexer/Lexer";
-import { ContextBuilder } from "./ContextBuilder";
-import { provideSemanticTokens } from "./SemanticTokensProvider";
+import { ContextBuilder } from "./context/ContextBuilder";
+import { provideSemanticTokens } from "./providers/SemanticTokensProvider";
 import {
   handleDocumentChange,
   handleDocumentOpen,
   handleDocumentSave,
   handleExtensionActive,
   typeDeclarationsMap,
-} from "./TokenCache";
-import { provideCodeCompletion } from "./CompletionProvider";
+} from "./context/TokenCache";
+import { provideCodeCompletion } from "./providers/CompletionProvider";
 
 export function activate(context: vscode.ExtensionContext) {
   console.log("Congratulations, your extension is now active!");

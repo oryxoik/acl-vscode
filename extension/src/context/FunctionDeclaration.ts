@@ -1,6 +1,6 @@
 import { IdentifierToken } from "./IdentifierToken";
-import { Token } from "./lexer/Token";
-import { TokenType } from "./lexer/TokenType";
+import { Token } from "../lexer/Token";
+import { TokenType } from "../lexer/TokenType";
 
 export class FunctionDeclaration {
   readonly Type: TokenType;
