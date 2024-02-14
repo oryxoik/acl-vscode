@@ -233,7 +233,7 @@ export default class Scanner {
     return this.isAlpha(char) || this.isDigit(char);
   }
 
-  isAlpha(char: string): boolean {
+  private isAlpha(char: string): boolean {
     return (
       (char >= "a" && char <= "z") ||
       (char >= "A" && char <= "Z") ||
@@ -241,7 +241,7 @@ export default class Scanner {
     );
   }
 
-  isDigit(char: string): boolean {
+  private isDigit(char: string): boolean {
     return char >= "0" && char <= "9";
   }
 
