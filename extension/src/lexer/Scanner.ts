@@ -1,18 +1,16 @@
 import { Token } from "./Token";
 import { TokenType } from "./TokenType";
 
-export default class Lexer {
-  private readonly _source: string;
-  private readonly _tokens: Token[];
+export default class Scanner {
   private readonly _keywords: Map<string, TokenType>;
 
+  private _source: string;
+  private _tokens: Token[];
   private _start: number = 0;
   private _current: number = 0;
   private _line: number = 0;
 
-  constructor(source: string) {
-    this._source = source;
-    this._tokens = [];
+  constructor() {
     this._keywords = new Map();
     this._keywords.set("class", TokenType.Class);
     this._keywords.set("cutscene", TokenType.Cutscene);
@@ -34,13 +32,19 @@ export default class Lexer {
     this._keywords.set("false", TokenType.False);
   }
 
-  Scan(): Token[] {
+  Scan(source: string): Token[] {
+    this._start = 0;
+    this._current = 0;
+    this._line = 0;
+    this._source = source;
+    this._tokens = [];
+
     while (!this.isAtEnd()) {
       this._start = this._current;
       this.scanToken();
     }
     this._tokens.push(
-      new Token(TokenType.Eof, this._line, this._source.length - 2, 1)
+      new Token(TokenType.Eof, "", this._line, this._source.length - 2, 1)
     );
     return this._tokens;
   }
@@ -50,37 +54,37 @@ export default class Lexer {
 
     switch (c) {
       case "(":
-        this.addToken(TokenType.LeftParen);
+        this.addSingleCharToken(TokenType.LeftParen, "(");
         break;
       case ")":
-        this.addToken(TokenType.RightParen);
+        this.addSingleCharToken(TokenType.RightParen, ")");
         break;
       case "{":
-        this.addToken(TokenType.LeftCurly);
+        this.addSingleCharToken(TokenType.LeftCurly, "{");
         break;
       case "}":
-        this.addToken(TokenType.RightCurly);
+        this.addSingleCharToken(TokenType.RightCurly, "}");
         break;
       case ";":
-        this.addToken(TokenType.Semicolon);
+        this.addSingleCharToken(TokenType.Semicolon, ";");
         break;
       case ",":
-        this.addToken(TokenType.Comma);
+        this.addSingleCharToken(TokenType.Comma, ",");
         break;
       case ".":
-        this.addToken(TokenType.Dot);
+        this.addSingleCharToken(TokenType.Dot, ".");
         break;
       case "-":
-        this.addToken(TokenType.Minus);
+        this.addSingleCharToken(TokenType.Minus, "-");
         break;
       case "+":
-        this.addToken(TokenType.Plus);
+        this.addSingleCharToken(TokenType.Plus, "+");
         break;
       case "*":
-        this.addToken(TokenType.Star);
+        this.addSingleCharToken(TokenType.Star, "*");
         break;
       case "/":
-        this.addToken(TokenType.Slash);
+        this.addSingleCharToken(TokenType.Slash, "/");
         break;
       case "!":
         this.addToken(this.match("=") ? TokenType.BangEqual : TokenType.Bang);
@@ -245,8 +249,13 @@ export default class Lexer {
     return this._current >= this._source.length;
   }
 
+  private addSingleCharToken(tokenType: TokenType, char: string) {
+    this._tokens.push(new Token(tokenType, char, this._line, this._start, 1));
+  }
+
   private addToken(type: TokenType, length: number | null = null) {
     if (length === null) length = this._current - this._start;
-    this._tokens.push(new Token(type, this._line, this._start, length));
+    const lexeme = this._source.substring(this._start, this._current);
+    this._tokens.push(new Token(type, lexeme, this._line, this._start, length));
   }
 }

@@ -6,14 +6,17 @@ export class Token {
   public readonly startIndex: number;
   public readonly endIndex: number;
   public readonly length: number;
+  public readonly lexeme: string;
 
   constructor(
     type: TokenType,
+    lexeme: string,
     line: number,
     startIndex: number,
     length: number
   ) {
     this.type = type;
+    this.lexeme = lexeme;
     this.line = line;
     this.startIndex = startIndex;
     this.length = length;
