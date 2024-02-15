@@ -1,261 +1,188 @@
-import { Token } from "./Token";
+import { Token, createToken } from "./token";
 import { TokenType } from "./TokenType";
+import keywords from "./keywords";
 
-export default class Scanner {
-  private readonly _keywords: Map<string, TokenType>;
+function tokenize(source: string): Token[] {
+  const tokens: Token[] = [];
+  var start = 0;
+  var current = 0;
+  var line = 0;
 
-  private _source: string;
-  private _tokens: Token[];
-  private _start: number = 0;
-  private _current: number = 0;
-  private _line: number = 0;
-
-  constructor() {
-    this._keywords = new Map();
-    this._keywords.set("class", TokenType.Class);
-    this._keywords.set("cutscene", TokenType.Cutscene);
-    this._keywords.set("component", TokenType.Component);
-    this._keywords.set("extension", TokenType.Extension);
-    this._keywords.set("function", TokenType.Function);
-    this._keywords.set("coroutine", TokenType.Coroutine);
-    this._keywords.set("self", TokenType.Self);
-    this._keywords.set("wait", TokenType.Wait);
-    this._keywords.set("null", TokenType.Null);
-    this._keywords.set("return", TokenType.Return);
-    this._keywords.set("if", TokenType.If);
-    this._keywords.set("else", TokenType.Else);
-    this._keywords.set("elif", TokenType.ElseIf);
-    this._keywords.set("for", TokenType.For);
-    this._keywords.set("while", TokenType.While);
-    this._keywords.set("in", TokenType.In);
-    this._keywords.set("true", TokenType.True);
-    this._keywords.set("false", TokenType.False);
+  while (!isAtEnd()) {
+    start = current;
+    scanToken();
   }
+  tokens.push(createToken(TokenType.Eof, "", line, source.length - 2, 1));
 
-  Scan(source: string): Token[] {
-    this._start = 0;
-    this._current = 0;
-    this._line = 0;
-    this._source = source;
-    this._tokens = [];
+  return tokens;
 
-    while (!this.isAtEnd()) {
-      this._start = this._current;
-      this.scanToken();
-    }
-    this._tokens.push(
-      new Token(TokenType.Eof, "", this._line, this._source.length - 2, 1)
-    );
-    return this._tokens;
-  }
-
-  private scanToken() {
-    const c = this.advance();
-
+  function scanToken(): void {
+    const c = advance();
     switch (c) {
       case "(":
-        this.addSingleCharToken(TokenType.LeftParen, "(");
+        addSingleCharToken(TokenType.LeftParen, "(");
         break;
       case ")":
-        this.addSingleCharToken(TokenType.RightParen, ")");
+        addSingleCharToken(TokenType.RightParen, ")");
         break;
       case "{":
-        this.addSingleCharToken(TokenType.LeftCurly, "{");
+        addSingleCharToken(TokenType.LeftCurly, "{");
         break;
       case "}":
-        this.addSingleCharToken(TokenType.RightCurly, "}");
+        addSingleCharToken(TokenType.RightCurly, "}");
         break;
       case ";":
-        this.addSingleCharToken(TokenType.Semicolon, ";");
+        addSingleCharToken(TokenType.Semicolon, ";");
         break;
       case ",":
-        this.addSingleCharToken(TokenType.Comma, ",");
+        addSingleCharToken(TokenType.Comma, ",");
         break;
       case ".":
-        this.addSingleCharToken(TokenType.Dot, ".");
+        addSingleCharToken(TokenType.Dot, ".");
         break;
       case "-":
-        this.addSingleCharToken(TokenType.Minus, "-");
+        addSingleCharToken(TokenType.Minus, "-");
         break;
       case "+":
-        this.addSingleCharToken(TokenType.Plus, "+");
+        addSingleCharToken(TokenType.Plus, "+");
         break;
       case "*":
-        this.addSingleCharToken(TokenType.Star, "*");
+        addSingleCharToken(TokenType.Star, "*");
         break;
       case "/":
-        this.addSingleCharToken(TokenType.Slash, "/");
+        addSingleCharToken(TokenType.Slash, "/");
         break;
       case "!":
-        this.addToken(this.match("=") ? TokenType.BangEqual : TokenType.Bang);
+        addToken(match("=") ? TokenType.BangEqual : TokenType.Bang);
         break;
       case "&":
-        this.addToken(
-          this.match("&") ? TokenType.AmpersandAmpersand : TokenType.Ampersand
+        addToken(
+          match("&") ? TokenType.AmpersandAmpersand : TokenType.Ampersand
         );
         break;
       case "|":
-        this.addToken(this.match("|") ? TokenType.PipePipe : TokenType.Pipe);
+        addToken(match("|") ? TokenType.PipePipe : TokenType.Pipe);
         break;
       case "=":
-        this.addToken(this.match("=") ? TokenType.EqualEqual : TokenType.Equal);
+        addToken(match("=") ? TokenType.EqualEqual : TokenType.Equal);
         break;
       case "<":
-        this.addToken(this.match("=") ? TokenType.LessEqual : TokenType.Less);
+        addToken(match("=") ? TokenType.LessEqual : TokenType.Less);
         break;
       case ">":
-        this.addToken(
-          this.match("=") ? TokenType.GreaterEqual : TokenType.Greater
-        );
+        addToken(match("=") ? TokenType.GreaterEqual : TokenType.Greater);
         break;
       case "#":
-        this.comment();
+        comment();
         break;
-
       case " ":
       case "\r":
       case "\t":
         // Ignore whitespace.
         break;
-
       case "\n":
-        this._line++;
+        line++;
         break;
-
       case '"':
-        this.string();
+        string();
         break;
-
-      default:
-        if (this.isDigit(c)) {
-          this.number();
-        } else if (this.isAlpha(c)) {
-          this.identifier();
-        } else {
-          console.log(`[${this._line}]: Unexpected character ${c}.`);
-        }
+      default: {
+        if (isDigit(c)) number();
+        else if (isAlpha(c)) identifier();
+        else console.log(`[${line}]: Unexpected character ${c}.`);
         break;
+      }
     }
   }
-
-  private comment() {
-    while (this.peek() != "#" && !this.isAtEnd()) {
-      if (this.peek() == "\n") this._line++;
-      this.advance();
+  function comment(): void {
+    while (peek() !== "#" && !isAtEnd()) {
+      if (peek() === "\n") line++;
+      advance();
     }
-
-    if (this.isAtEnd()) {
-      console.log(`[${this._line}]: Unterminated comment.`);
+    if (isAtEnd()) {
+      console.log(`[${line}]: Unterminated comment.`);
       return;
     }
-
     // The closing #.
-    this.advance();
-    this.addToken(TokenType.Comment);
+    advance();
+    addToken(TokenType.Comment);
   }
-
-  private identifier() {
-    while (this.isAlphaNumeric(this.peek())) {
-      this.advance();
+  function identifier(): void {
+    while (isAlphaNumeric(peek())) {
+      advance();
     }
+    const text = source.substring(start, current);
 
-    let tokenType: TokenType | undefined;
-    const text = this._source.substring(this._start, this._current);
-    if (this._keywords.has(text)) {
-      tokenType = this._keywords.get(text);
-    }
+    var type: TokenType = keywords.has(text)
+      ? keywords.get(text) ?? TokenType.Identifier
+      : TokenType.Identifier;
 
-    if (tokenType === undefined) {
-      tokenType = TokenType.Identifier;
-    }
-
-    this.addToken(tokenType);
+    addToken(type);
   }
-
-  private number() {
-    while (this.isDigit(this.peek())) this.advance();
-
-    if (this.peek() == "." && this.isDigit(this.peekNext())) {
-      //consume '.'
-      this.advance();
-      while (this.isDigit(this.peek())) this.advance();
+  function number(): void {
+    while (isDigit(peek())) advance();
+    if (peek() === "." && isDigit(PeekNext())) {
+      // Consume '.'
+      advance();
+      while (isDigit(peek())) advance();
     }
-
-    this.addToken(
-      TokenType.Number,
-      Number.parseFloat(this._source.substring(this._start, this._current))
-    );
+    addToken(TokenType.Number);
   }
-
-  private string() {
-    while (this.peek() != '"' && !this.isAtEnd()) {
-      if (this.peek() == "\n") this._line++;
-      this.advance();
+  function string(): void {
+    while (peek() !== '"' && !isAtEnd()) {
+      if (peek() === "\n") line++;
+      advance();
     }
-
     // Unterminated string.
-    if (this.isAtEnd()) {
-      console.log(`[${this._line}]: Unterminated string.`);
+    if (isAtEnd()) {
+      console.log(`[${line}]: Unterminated string.`);
       return;
     }
-
     // The closing ".
-    this.advance();
-
+    advance();
     // Trim the surrounding quotes.
-    this.addToken(TokenType.String, this._current - 1 - (this._start + 1));
+    addToken(TokenType.String, current - 1 - (start + 1));
   }
-
-  private match(expectedChar: string): boolean {
-    if (this.isAtEnd()) return false;
-    if (this._source.charAt(this._current) !== expectedChar) return false;
-
-    this._current++;
+  function match(expectedChar: string): boolean {
+    if (isAtEnd()) return false;
+    if (source[current] !== expectedChar) return false;
+    current++;
     return true;
   }
-
-  private advance(): string {
-    this._current++;
-    return this._source.charAt(this._current - 1);
+  function advance(): string {
+    current++;
+    return source[current - 1];
   }
-
-  private peek(): string {
-    if (this.isAtEnd()) return "\0";
-    return this._source.charAt(this._current);
+  function peek(): string {
+    if (isAtEnd()) return "\0";
+    return source[current];
   }
-
-  private peekNext(): string {
-    if (this._current + 1 >= this._source.length) return "\0";
-    return this._source.charAt(this._current + 1);
+  function PeekNext(): string {
+    if (current + 1 >= source.length) return "\0";
+    return source[current + 1];
   }
-
-  private isAlphaNumeric(char: string): boolean {
-    return this.isAlpha(char) || this.isDigit(char);
+  function isAtEnd(): boolean {
+    return current >= source.length;
   }
-
-  private isAlpha(char: string): boolean {
-    return (
-      (char >= "a" && char <= "z") ||
-      (char >= "A" && char <= "Z") ||
-      char == "_"
+  function addSingleCharToken(type: TokenType, char: string): void {
+    tokens.push(createToken(type, char, line, start, 1));
+  }
+  function addToken(type: TokenType, length: number | null = null): void {
+    length ??= current - start;
+    tokens.push(
+      createToken(type, source.substring(start, current), line, start, length)
     );
   }
-
-  private isDigit(char: string): boolean {
-    return char >= "0" && char <= "9";
-  }
-
-  private isAtEnd(): boolean {
-    return this._current >= this._source.length;
-  }
-
-  private addSingleCharToken(tokenType: TokenType, char: string) {
-    this._tokens.push(new Token(tokenType, char, this._line, this._start, 1));
-  }
-
-  private addToken(type: TokenType, length: number | null = null) {
-    if (length === null) length = this._current - this._start;
-    const lexeme = this._source.substring(this._start, this._current);
-    this._tokens.push(new Token(type, lexeme, this._line, this._start, length));
-  }
 }
+
+function isAlphaNumeric(c: string): boolean {
+  return isAlpha(c) || isDigit(c);
+}
+function isAlpha(c: string): boolean {
+  return (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || c == "_";
+}
+function isDigit(c: string): boolean {
+  return c >= "0" && c <= "9";
+}
+
+export default tokenize;
