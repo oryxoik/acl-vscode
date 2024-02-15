@@ -1,28 +1,35 @@
 import * as vscode from "vscode";
-import Lexer from "./lexer/Lexer";
 import { ContextBuilder } from "./context/ContextBuilder";
 import { provideSemanticTokens } from "./providers/SemanticTokensProvider";
+import { provideCodeCompletion } from "./providers/CompletionProvider";
+import { getCustomLogicTextDocumentsInWorkspace } from "./utils/document-helper";
 import {
   handleDocumentChange,
   handleDocumentOpen,
-  handleDocumentSave,
   handleExtensionActive,
-  typeDeclarationsMap,
-} from "./context/TokenCache";
-import { provideCodeCompletion } from "./providers/CompletionProvider";
+} from "./token-mapper";
+// import TokenMapper from "./context/TokenMapper";
 
 export function activate(context: vscode.ExtensionContext) {
-  console.log("Congratulations, your extension is now active!");
-
+  console.log("extension activated");
   handleExtensionActive();
 
   context.subscriptions.push(
-    vscode.workspace.onDidChangeTextDocument(handleDocumentChange),
-    vscode.workspace.onDidSaveTextDocument(handleDocumentSave),
     vscode.workspace.onDidOpenTextDocument(handleDocumentOpen),
-    provideSemanticTokens(typeDeclarationsMap),
-    provideCodeCompletion(typeDeclarationsMap)
+    vscode.workspace.onDidChangeTextDocument(handleDocumentChange),
+    provideSemanticTokens(),
+    provideCodeCompletion()
   );
+
+  // vscode.workspace.on
+  // handleExtensionActive();
+
+  // context.subscriptions.push(
+  //   vscode.workspace.onDidChangeTextDocument(handleDocumentChange),
+  //   vscode.workspace.onDidSaveTextDocument(handleDocumentSave),
+  //   vscode.workspace.onDidOpenTextDocument(handleDocumentOpen),
+  //   provideCodeCompletion(typeDeclarationsMap)
+  // );
 
   // const start = performance.now();
   // const lexer = new Lexer(source);

@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import { TypeDeclaration } from "./TypeDeclaration";
-import Lexer from "../lexer/Lexer";
 import { ContextBuilder } from "./ContextBuilder";
 import { mapTokensByLine } from "../providers/CompletionProvider";
 
@@ -48,10 +47,11 @@ export function handleDocumentSave(document: vscode.TextDocument) {
 }
 
 function buildContext(source: string): TypeDeclaration[] {
-  const lexer = new Lexer(source);
-  const tokens = lexer.Scan();
-  const typeDeclarations = new ContextBuilder(source, tokens).build();
-  mapTokensByLine(tokens);
+  // const lexer = new Scanner();
+  // const tokens = lexer.scan(source);
+  // const typeDeclarations = new ContextBuilder(source, tokens).build();
+  // mapTokensByLine(tokens);
+  const typeDeclarations = [];
 
   return typeDeclarations;
 }

@@ -1,16 +1,15 @@
 import * as vscode from "vscode";
 import { TypeDeclaration } from "../context/TypeDeclaration";
-import { Token } from "../lexer/Token";
+import { Token } from "../lexer/token";
 import { TokenType } from "../lexer/TokenType";
+import { typeDefinitions } from "../context-builder";
 
 const tokenTypes = ["class", "function", "parameter", "variable", "property"];
 const tokenModifiers = ["declaration", "modification", "readonly", "static"];
 const legend = new vscode.SemanticTokensLegend(tokenTypes, tokenModifiers);
 
-export function provideSemanticTokens(
-  typeDeclarationsMap: Map<string, TypeDeclaration[]>
-): vscode.Disposable {
-  const selector = { language: "acl", scheme: "file" };
+export function provideSemanticTokens(): vscode.Disposable {
+  const selector = { language: "acl" };
 
   const provider: vscode.DocumentSemanticTokensProvider = {
     provideDocumentSemanticTokens(
@@ -18,33 +17,31 @@ export function provideSemanticTokens(
     ): vscode.ProviderResult<vscode.SemanticTokens> {
       const tokensBuilder = new vscode.SemanticTokensBuilder(legend);
 
-      if (typeDeclarationsMap.has(document.uri.toString())) {
-        const typeDeclarations = typeDeclarationsMap.get(
-          document.uri.toString()
-        );
-        typeDeclarations.forEach((type) => {
+      console.log(document.uri.toString());
+      console.log(typeDefinitions.has(document.uri.toString()));
+      if (typeDefinitions.has(document.uri.toString())) {
+        const definitions = typeDefinitions.get(document.uri.toString());
+        definitions.forEach((type) => {
           tokensBuilder.push(
-            getTokenRange(document, type.Identifier.Token),
+            getTokenRange(document, type.identifierToken),
             "class",
             ["declaration"]
           );
 
-          type.Variables.forEach((variable) => {
-            tokensBuilder.push(
-              getTokenRange(document, variable.Token),
-              "variable",
-              ["declaration"]
-            );
+          type.variables.forEach((variable) => {
+            tokensBuilder.push(getTokenRange(document, variable), "variable", [
+              "declaration",
+            ]);
           });
 
-          type.CallExpressionIdentifiers.forEach((callId) => {
+          type.callExpressions.forEach((callId) => {
             let isTypeCreation = false;
-            for (let i = 0; i < typeDeclarations.length; i++) {
-              const tdm = typeDeclarations[i];
+            for (let i = 0; i < definitions.length; i++) {
+              const tdm = definitions[i];
               if (
-                (tdm.Type === TokenType.Class ||
-                  tdm.Type === TokenType.Extension) &&
-                callId.Text === tdm.Identifier.Text
+                (tdm.typeToken.type === TokenType.Class ||
+                  tdm.typeToken.type === TokenType.Extension) &&
+                callId.lexeme === tdm.identifierToken.lexeme
               ) {
                 isTypeCreation = true;
                 break;
@@ -52,27 +49,27 @@ export function provideSemanticTokens(
             }
 
             tokensBuilder.push(
-              getTokenRange(document, callId.Token),
+              getTokenRange(document, callId),
               isTypeCreation ? "class" : "function",
               ["readonly"]
             );
           });
 
-          type.VariableAssignments.forEach((variable) => {
+          type.variableAssignment.forEach((variable) => {
             tokensBuilder.push(
-              getTokenRange(document, variable.Identifier.Token),
+              getTokenRange(document, variable.identifierToken),
               "variable",
               ["modification"]
             );
           });
 
-          type.MemberAccess.forEach((m) => {
+          type.memberAccesss.forEach((m) => {
             let isExtension = false;
-            for (let i = 0; i < typeDeclarations.length; i++) {
-              const tdm = typeDeclarations[i];
+            for (let i = 0; i < definitions.length; i++) {
+              const tdm = definitions[i];
               if (
-                tdm.Type === TokenType.Extension &&
-                m.Parent.Text === tdm.Identifier.Text
+                tdm.typeToken.type === TokenType.Extension &&
+                m.parent.lexeme === tdm.identifierToken.lexeme
               ) {
                 isExtension = true;
                 break;
@@ -80,22 +77,22 @@ export function provideSemanticTokens(
             }
 
             tokensBuilder.push(
-              getTokenRange(document, m.Parent.Token),
+              getTokenRange(document, m.parent),
               isExtension ? "class" : "property",
               ["static"]
             );
           });
 
-          type.Functions.forEach((func) => {
+          type.functions.forEach((func) => {
             tokensBuilder.push(
-              getTokenRange(document, func.Identifier.Token),
+              getTokenRange(document, func.identifierToken),
               "function",
               ["declaration"]
             );
 
-            func.Variables.forEach((variable) => {
+            func.variables.forEach((variable) => {
               tokensBuilder.push(
-                getTokenRange(document, variable.Token),
+                getTokenRange(document, variable),
                 "parameter",
                 ["declaration"]
               );

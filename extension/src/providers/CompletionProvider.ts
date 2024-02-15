@@ -1,16 +1,17 @@
 import * as vscode from "vscode";
-import { Token } from "../lexer/Token";
 import { TokenType } from "../lexer/TokenType";
 import { TypeDeclaration } from "../context/TypeDeclaration";
+import { Token } from "../lexer/token";
+import { typeDefinitions } from "../context-builder";
 
 let allTokens: Token[] = [];
 let tokensMap: Map<number, Token[]> = new Map<number, Token[]>();
 
-export function provideCodeCompletion(
-  typesMap: Map<string, TypeDeclaration[]>
-): vscode.Disposable {
+// TODO: cleanup this and add the builtin types
+
+export function provideCodeCompletion(): vscode.Disposable {
   return vscode.languages.registerCompletionItemProvider(
-    { language: "acl", scheme: "file" },
+    { language: "acl" },
     {
       provideCompletionItems(document, position, token, context) {
         var lineTokens = tokensMap.get(findNearestLine(position.line));
@@ -76,21 +77,21 @@ export function provideCodeCompletion(
           if (nearestToken.type === TokenType.Dot) {
             const prev = getPreviousToken(nearestToken);
             if (prev.type === TokenType.Self) {
-              typesMap.forEach((types) => {
+              typeDefinitions.forEach((types) => {
                 types.forEach((type) => {
-                  if (type.Identifier.Token === typeIdentifier) {
+                  if (type.identifierToken === typeIdentifier) {
                     found = true;
                     items = [];
-                    type.Variables.forEach((variable) => {
+                    type.variables.forEach((variable) => {
                       const item = new vscode.CompletionItem(
-                        variable.Text,
+                        variable.lexeme,
                         vscode.CompletionItemKind.Field
                       );
                       items.push(item);
                     });
-                    type.Functions.forEach((func) => {
+                    type.functions.forEach((func) => {
                       const item = new vscode.CompletionItem(
-                        func.Identifier.Text,
+                        func.identifierToken.lexeme,
                         vscode.CompletionItemKind.Function
                       );
                       items.push(item);
@@ -104,24 +105,24 @@ export function provideCodeCompletion(
               const end = document.positionAt(prev.endIndex);
               const typeName = document.getText(new vscode.Range(start, end));
 
-              typesMap.forEach((types) => {
+              typeDefinitions.forEach((types) => {
                 types.forEach((type) => {
                   if (
-                    type.Type === TokenType.Extension &&
-                    type.Identifier.Text === typeName
+                    type.typeToken.type === TokenType.Extension &&
+                    type.identifierToken.lexeme === typeName
                   ) {
                     found = true;
                     items = [];
-                    type.Variables.forEach((variable) => {
+                    type.variables.forEach((variable) => {
                       const item = new vscode.CompletionItem(
-                        variable.Text,
+                        variable.lexeme,
                         vscode.CompletionItemKind.Field
                       );
                       items.push(item);
                     });
-                    type.Functions.forEach((func) => {
+                    type.functions.forEach((func) => {
                       const item = new vscode.CompletionItem(
-                        func.Identifier.Text,
+                        func.identifierToken.lexeme,
                         vscode.CompletionItemKind.Function
                       );
                       items.push(item);
@@ -133,37 +134,37 @@ export function provideCodeCompletion(
           }
 
           if (!found) {
-            typesMap.forEach((types) => {
+            typeDefinitions.forEach((types) => {
               types.forEach((type) => {
                 items.push(
                   new vscode.CompletionItem(
-                    type.Identifier.Text,
+                    type.identifierToken.lexeme,
                     vscode.CompletionItemKind.Class
                   )
                 );
 
-                if (type.Identifier.Token === typeIdentifier) {
-                  type.Variables.forEach((variable) => {
+                if (type.identifierToken === typeIdentifier) {
+                  type.variables.forEach((variable) => {
                     const item = new vscode.CompletionItem(
-                      variable.Text,
+                      variable.lexeme,
                       vscode.CompletionItemKind.Field
                     );
-                    item.insertText = `self.${variable.Text}`;
+                    item.insertText = `self.${variable.lexeme}`;
                     items.push(item);
                   });
-                  type.Functions.forEach((func) => {
+                  type.functions.forEach((func) => {
                     const item = new vscode.CompletionItem(
-                      func.Identifier.Text,
+                      func.identifierToken.lexeme,
                       vscode.CompletionItemKind.Function
                     );
-                    item.insertText = `self.${func.Identifier.Text}`;
+                    item.insertText = `self.${func.identifierToken.lexeme}`;
                     items.push(item);
 
-                    if (func.Identifier.Token === funcScopeInfo.idToken) {
-                      func.Variables.forEach((arg) => {
+                    if (func.identifierToken === funcScopeInfo.idToken) {
+                      func.variables.forEach((arg) => {
                         items.push(
                           new vscode.CompletionItem(
-                            arg.Text,
+                            arg.lexeme,
                             vscode.CompletionItemKind.Variable
                           )
                         );

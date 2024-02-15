@@ -1,7 +1,7 @@
 import { FunctionDeclaration } from "./FunctionDeclaration";
 import { IdentifierToken } from "./IdentifierToken";
 import { VariableAssignment } from "./VariableAssignment";
-import { Token } from "../lexer/Token";
+import { Token } from "../lexer/token";
 import { TokenType } from "../lexer/TokenType";
 
 export class TypeDeclaration {

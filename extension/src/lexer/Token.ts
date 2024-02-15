@@ -5,6 +5,7 @@ interface Token {
   lexeme: string;
   line: number;
   startIndex: number;
+  endIndex: number;
   length: number;
 }
 
@@ -20,6 +21,7 @@ function createToken(
     lexeme,
     line,
     startIndex,
+    endIndex: startIndex + length,
     length,
   };
 }

@@ -1,5 +1,5 @@
 import { IdentifierToken } from "./IdentifierToken";
-import { Token } from "../lexer/Token";
+import { Token } from "../lexer/token";
 import { TokenType } from "../lexer/TokenType";
 
 export class FunctionDeclaration {
