@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { ContextBuilder } from "./context/ContextBuilder";
-import { provideSemanticTokens } from "./providers/SemanticTokensProvider";
+import { provideSemanticTokens } from "./providers/semantic-token";
 import { provideCodeCompletion } from "./providers/CompletionProvider";
 import { getCustomLogicTextDocumentsInWorkspace } from "./utils/document-helper";
 import {

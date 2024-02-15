@@ -8,11 +8,13 @@ import {
   tryAddVariableToDefinition,
 } from "./definitions";
 import { TokenType } from "./lexer/TokenType";
+import types from "./builtin/types";
 
 export const typeDefinitions: Map<string, TypeDefinition[]> = new Map<
   string,
   TypeDefinition[]
->();
+>([["built-in", types]]);
+export var allTypeDefinitions: TypeDefinition[] = [...types];
 
 export function updateContextForDocument(uri: vscode.Uri) {
   const tokens = mappedTokens.get(uri);
@@ -138,6 +140,12 @@ export function updateContextForDocument(uri: vscode.Uri) {
   }
 
   typeDefinitions.set(uri.toString(), definitions);
+
+  allTypeDefinitions = [];
+  typeDefinitions.forEach(ts => {
+    allTypeDefinitions = allTypeDefinitions.concat(ts);
+  })
+
 
   function match(
     i: number,
