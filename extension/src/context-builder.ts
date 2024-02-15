@@ -8,7 +8,7 @@ import {
   tryAddVariableToDefinition,
 } from "./definitions";
 import { TokenType } from "./lexer/TokenType";
-import types from "./builtin/types";
+import types from "./builtin-types";
 
 export const typeDefinitions: Map<string, TypeDefinition[]> = new Map<
   string,

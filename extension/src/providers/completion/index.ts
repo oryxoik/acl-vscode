@@ -152,7 +152,9 @@ export function provideCodeCompletion(): vscode.Disposable {
                   type.typeToken.type !== TokenType.Component &&
                   type.typeToken.type !== TokenType.Cutscene &&
                   type.identifierToken.lexeme !== typeIdentifier.lexeme &&
-                  type.identifierToken.lexeme !== "Main"
+                  type.identifierToken.lexeme !== "Main" &&
+                  type.identifierToken.lexeme !== "Vector3" &&
+                  type.identifierToken.lexeme !== "Quaternion"
                 ) {
                   items.push(
                     new vscode.CompletionItem(
