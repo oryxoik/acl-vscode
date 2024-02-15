@@ -1,8 +1,8 @@
 import * as vscdoe from "vscode";
 import { Token } from "./lexer/token";
 import { typeDefinitions, updateContextForDocument } from "./context-builder";
-import { mapTokensByLine } from "./providers/CompletionProvider";
-import tokenize from "./lexer/Scanner";
+import { mapTokensByLine } from "./providers/completion";
+import tokenize from "./lexer/scanner";
 
 const mappedTokens: Map<vscdoe.Uri, Token[]> = new Map<vscdoe.Uri, Token[]>();
 const processSource = (uri: vscdoe.Uri, source: string) => {
