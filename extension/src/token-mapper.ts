@@ -37,7 +37,6 @@ export function handleDocumentOpen(doc: vscdoe.TextDocument) {
 export function handleDocumentChange(e: vscdoe.TextDocumentChangeEvent) {
   if (e.document.languageId != "acl") return;
   processSource(e.document.uri, e.document.getText());
-  console.log("changed");
   // Todo: no need to parse the whole file one every key press
 }
 
