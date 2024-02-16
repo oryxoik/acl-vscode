@@ -83,7 +83,7 @@ export function findNearestPreviousToken(line: number, offset: number): Token {
   let nearest: Token | null = null;
   let minOffset = Number.MAX_SAFE_INTEGER;
   currentTokens.forEach((token) => {
-    const dist = Math.abs(offset - token.startIndex);
+    const dist = Math.abs(offset - (token.startIndex + 1));
     if (dist < minOffset) {
       nearest = token;
       minOffset = dist;
