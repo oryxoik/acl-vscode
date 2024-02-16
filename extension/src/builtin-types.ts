@@ -2,6 +2,9 @@ import { FunctionDefinition, TypeDefinition } from "./definitions";
 import { TokenType } from "./lexer/TokenType";
 import { Token, createToken } from "./lexer/token";
 
+const DictBuiltin = createBuiltinObject("Dict");
+const ListBuiltin = createBuiltinObject("List");
+const RangeBuiltin = createBuiltinObject("Range");
 const Vector3Builtin = createBuiltinExtension(
   "Vector3",
   ["Up", "Down", "Left", "Right", "Forward", "Back", "Zero"],
@@ -215,6 +218,9 @@ const PhysicsBuiltin = createBuiltinExtension(
   ["LineCast", "SphereCast"]
 );
 
+function createBuiltinObject(identifier: string) {
+  return createBuiltinType(TokenType.Class, identifier, [], []);
+}
 function createBuiltinExtension(
   id: string,
   variables: string[],
@@ -252,6 +258,9 @@ function createBuiltinType(
 }
 
 export default [
+  DictBuiltin,
+  ListBuiltin,
+  RangeBuiltin,
   Vector3Builtin,
   QuaternionBuiltin,
   GameBuiltin,
