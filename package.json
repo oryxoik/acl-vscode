@@ -2,7 +2,7 @@
   "name": "aottg-custom-logic",
   "displayName": "Aottg Custom Logic",
   "description": "Syntax highlighting for Aottg CustomLogic",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "./extension/out/extension.js",
   "engines": {
     "vscode": "^1.78.0"
