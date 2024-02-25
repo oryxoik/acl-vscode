@@ -95,7 +95,12 @@ function tokenize(source: string): Token[] {
     }
   }
   function comment(): void {
-    while (peek() !== "#" && !isAtEnd()) {
+    while (!isAtEnd()) {
+      const prev = current - 1;
+      if (peek() === "#" && prev >= 0 && source[prev] !== "\\") {
+        break;
+      }
+
       if (peek() === "\n") line++;
       advance();
     }
@@ -121,7 +126,7 @@ function tokenize(source: string): Token[] {
   }
   function number(): void {
     while (isDigit(peek())) advance();
-    if (peek() === "." && isDigit(PeekNext())) {
+    if (peek() === "." && isDigit(peekNext())) {
       // Consume '.'
       advance();
       while (isDigit(peek())) advance();
@@ -157,7 +162,7 @@ function tokenize(source: string): Token[] {
     if (isAtEnd()) return "\0";
     return source[current];
   }
-  function PeekNext(): string {
+  function peekNext(): string {
     if (current + 1 >= source.length) return "\0";
     return source[current + 1];
   }
