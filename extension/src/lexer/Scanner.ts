@@ -97,27 +97,21 @@ function tokenize(source: string): Token[] {
     }
   }
   function comment(): void {
-    while (!isAtEnd()) {
-      if (peek() === "\n") {
-        line++;
-        break;
-      }
-
+    while (peek() !== "\n" && !isAtEnd()) {
       advance();
     }
-
-    addToken(TokenType.Comment);
   }
   function blockComment(): void {
     while (!isAtEnd()) {
-      if (peek() == "\n") line++;
-      if (peek() == "*" && peekNext() == "/") {
+      if (peek() === "\n") line++;
+      if (peek() === "*" && peekNext() === "/") {
         advance();
         advance();
         break;
       }
       advance();
     }
+    if (isAtEnd()) console.log(`${line} unclosed block comment`);
   }
   function identifier(): void {
     while (isAlphaNumeric(peek())) {
