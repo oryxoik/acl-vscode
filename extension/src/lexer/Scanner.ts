@@ -50,7 +50,9 @@ function tokenize(source: string): Token[] {
         addSingleCharToken(TokenType.Star, "*");
         break;
       case "/":
-        addSingleCharToken(TokenType.Slash, "/");
+        if (peek() == "*") {
+          blockComment();
+        } else addSingleCharToken(TokenType.Slash, "/");
         break;
       case "!":
         addToken(match("=") ? TokenType.BangEqual : TokenType.Bang);
@@ -96,21 +98,26 @@ function tokenize(source: string): Token[] {
   }
   function comment(): void {
     while (!isAtEnd()) {
-      const prev = current - 1;
-      if (peek() === "#" && prev >= 0 && source[prev] !== "\\") {
+      if (peek() === "\n") {
+        line++;
         break;
       }
 
-      if (peek() === "\n") line++;
       advance();
     }
-    if (isAtEnd()) {
-      console.log(`[${line}]: Unterminated comment.`);
-      return;
-    }
-    // The closing #.
-    advance();
+
     addToken(TokenType.Comment);
+  }
+  function blockComment(): void {
+    while (!isAtEnd()) {
+      if (peek() == "\n") line++;
+      if (peek() == "*" && peekNext() == "/") {
+        advance();
+        advance();
+        break;
+      }
+      advance();
+    }
   }
   function identifier(): void {
     while (isAlphaNumeric(peek())) {

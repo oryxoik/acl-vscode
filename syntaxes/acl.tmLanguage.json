@@ -79,15 +79,13 @@
     "comments": {
       "patterns": [
         {
-          "name": "comment.block",
-          "begin": "#",
-          "end": "#",
-          "patterns": [
-            {
-              "name": "constant.character.escape.acl",
-              "match": "\\\\( )*#"
-            }
-          ]
+          "name": "comment.line.double-slash.acl",
+          "match": "(#.*)$"
+        },
+        {
+          "name": "comment.block.acl",
+          "begin": "/\\*",
+          "end": "\\*/"
         }
       ]
     },
