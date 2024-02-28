@@ -7,7 +7,9 @@ and adds some code snippets.
 
 # Install
 
-To install, simply clone the repo, extract the content to `<user home>/.vscode/extensions`
+- Download the latest `.vsix` from [here](https://github.com/oryxoik/acl-vscode/tags)
+- In vscode, open the command palette (`Ctrl + Shift + P` by default)
+- Use the `Extensions: Install from VSIX...` command to install the extension
 
 # Snippets
 
