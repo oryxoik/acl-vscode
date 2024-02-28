@@ -5,15 +5,6 @@
   "foldingStopMarker": "^\\s*\\}",
   "patterns": [
     {
-      "name": "entity.name.type.class",
-      "match": "(?<=\\b(class|component|extension|cutscene)\\s+)[a-zA-Z][a-zA-Z0-9_]*\\b",
-      "captures": {
-        "0": {
-          "name": "entity.name.type"
-        }
-      }
-    },
-    {
       "include": "#comments"
     },
     {
@@ -45,35 +36,7 @@
         },
         {
           "name": "constant.numeric.acl",
-          "match": "(?<!\\$)\\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\\.?[0-9]*)|(\\.[0-9]+))((e|E)(\\+|-)?[0-9]+)?)\\b(?!\\$)"
-        },
-        {
-          "include": "#class-identifier"
-        },
-        {
-          "include": "#function-identifier"
-        }
-      ]
-    },
-    "class-identifier": {
-      "patterns": [
-        {
-          "match": "(?<!\\$)\\b(class|component|extension|cutscene)\\b(?!\\$)",
-          "name": "storage.type.primitive.acl"
-        }
-      ]
-    },
-    "function-identifier": {
-      "patterns": [
-        {
-          "name": "entity.name.function.acl",
-          "begin": "(?:[_$]*[a-zA-Z][a-zA-Z0-9_$]*)\\s*(?=\\()",
-          "end": "\\b",
-          "beginCaptures": {
-            "0": {
-              "name": "entity.name.function"
-            }
-          }
+          "match": "\\b([0-9]+(?:\\.[0-9]+)?)\\b"
         }
       ]
     },
@@ -84,6 +47,10 @@
           "match": "\\b(if|elif|else|while|for|in|wait|return)\\b"
         },
         {
+          "match": "(?<!\\$)\\b(class|component|extension|cutscene)\\b(?!\\$)",
+          "name": "storage.type.primitive.acl"
+        },
+        {
           "match": "(?<!\\$)\\b(function|coroutine)\\b(?!\\$)",
           "name": "storage.type.primitive.acl"
         }
@@ -92,16 +59,8 @@
     "operators": {
       "patterns": [
         {
-          "name": "keyword.operator.acl",
-          "match": "(?<!\\$)\\b(is\\!?)\\b(?!\\$)"
-        },
-        {
           "name": "keyword.operator.comparison.acl",
           "match": "(==|!=|<=?|>=?)"
-        },
-        {
-          "name": "keyword.operator.assignment.arithmetic.acl",
-          "match": "(([+*/%-]|\\~)=)"
         },
         {
           "name": "keyword.operator.assignment.acl",
@@ -109,7 +68,7 @@
         },
         {
           "name": "keyword.operator.arithmetic.acl",
-          "match": "(\\-|\\+|\\*|\\/|\\~\\/|%)"
+          "match": "(\\-|\\+|\\*|\\/|\\~\\/)"
         },
         {
           "name": "keyword.operator.logical.acl",
@@ -120,25 +79,20 @@
     "comments": {
       "patterns": [
         {
-          "match": "((//).*)$",
-          "captures": {
-            "1": {
-              "name": "comment.line.double-slash.acl"
-            }
-          }
+          "name": "comment.line.double-slash.acl",
+          "match": "(#.*)$"
+        },
+        {
+          "name": "comment.block.acl",
+          "begin": "/\\*",
+          "end": "\\*/"
         }
       ]
     },
     "strings": {
       "name": "string.quoted.double.acl",
       "begin": "\"",
-      "end": "\"",
-      "patterns": [
-        {
-          "name": "constant.character.escape.acl",
-          "match": "\\\\."
-        }
-      ]
+      "end": "\""
     },
     "punctuation": {
       "patterns": [

@@ -1,0 +1,56 @@
+export enum TokenType {
+  LeftCurly,
+  RightCurly,
+  LeftParen,
+  RightParen,
+
+  Semicolon,
+  Comma,
+  Dot,
+  Minus,
+  Plus,
+  Star,
+  Slash,
+  Ampersand,
+  AmpersandAmpersand,
+  Pipe,
+  PipePipe,
+
+  Bang,
+  BangEqual,
+  Equal,
+  EqualEqual,
+  Greater,
+  GreaterEqual,
+  Less,
+  LessEqual,
+
+  Identifier,
+  String,
+  Number,
+  Comment,
+
+  Class,
+  Cutscene,
+  Component,
+  Extension,
+
+  Self,
+
+  Function,
+  Coroutine,
+
+  Wait,
+  Null,
+  Return,
+  If,
+  Else,
+  ElseIf,
+  For,
+  While,
+  In,
+  True,
+  False,
+
+  Eof,
+}
