@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { Token } from "../lexer/Token";
 import { TokenType } from "../lexer/TokenType";
-import types from "../builtin-types";
+import builtinTypes from "../builtin-types";
 import * as parser from "../parser/index";
 
 const tokenTypes = ["class", "function", "parameter", "variable", "property"];
@@ -19,14 +19,11 @@ export function provideSemanticTokens(): vscode.Disposable {
             const definitions = parser.typeDefinitions.get(document.uri.toString());
 
             definitions.forEach((type) => {
-                if (types.includes(type)) return;
+                if (builtinTypes.includes(type)) return;
 
                 tokensBuilder.push(getTokenRange(document, type.identifierToken), "class", ["declaration"]);
 
-                type.variables.forEach((variable) => {
-                    tokensBuilder.push(getTokenRange(document, variable), "variable", ["declaration"]);
-                });
-
+                type.variables.forEach((variable) => tokensBuilder.push(getTokenRange(document, variable), "variable", ["declaration"]));
                 type.callExpressions.forEach((callId) => {
                     var isTypeCreation = false;
                     for (var i = 0; i < parser.allTypeDefinitions.length; i++) {
@@ -43,9 +40,9 @@ export function provideSemanticTokens(): vscode.Disposable {
                     tokensBuilder.push(getTokenRange(document, callId), isTypeCreation ? "class" : "function", ["readonly"]);
                 });
 
-                type.variableAssignment.forEach((variable) => {
-                    tokensBuilder.push(getTokenRange(document, variable.identifierToken), "variable", ["modification"]);
-                });
+                type.variableAssignment.forEach((variable) =>
+                    tokensBuilder.push(getTokenRange(document, variable.identifierToken), "variable", ["modification"])
+                );
 
                 type.memberAccesss.forEach((m) => {
                     var isExtension = false;
