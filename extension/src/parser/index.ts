@@ -109,13 +109,15 @@ const updateTypeDefinitionsForDocument = (uri: vscode.Uri) => {
         if (isTokenType(token, TokenType.Identifier) && isNextTokenOfType(documentTokens, i, 1, TokenType.Equal)) {
             if (currentFunc != null) {
                 if (!currentFunc.variables.has(token.lexeme)) {
-                    if (isPreviousTokenOfType(documentTokens, i, 1, TokenType.Dot) && isPreviousTokenOfType(documentTokens, i, 2, TokenType.Self)) {
-                        if (currentDef != null && !tryAddVariableToDefinition(currentDef, token)) {
-                            var value = "null";
-                            currentDef.variableAssignment.push({
-                                identifierToken: token,
-                                knownValue: value,
-                            });
+                    if (isPreviousTokenOfType(documentTokens, i, 1, TokenType.Dot)) {
+                        if (isPreviousTokenOfType(documentTokens, i, 2, TokenType.Self)) {
+                            if (currentDef != null && !tryAddVariableToDefinition(currentDef, token)) {
+                                var value = "null";
+                                currentDef.variableAssignment.push({
+                                    identifierToken: token,
+                                    knownValue: value,
+                                });
+                            }
                         }
                     } else {
                         const added = tryAddVariableToDefinition(currentFunc, token);
