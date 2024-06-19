@@ -67,7 +67,10 @@ const updateTypeDefinitionsForDocument = (uri: vscode.Uri) => {
         }
 
         // function definition
-        if (isTokenType(token, TokenType.Function) && isNextTokenOfType(documentTokens, i, 1, TokenType.Identifier)) {
+        if (
+            (isTokenType(token, TokenType.Function) || isTokenType(token, TokenType.Coroutine)) &&
+            isNextTokenOfType(documentTokens, i, 1, TokenType.Identifier)
+        ) {
             const idToken = documentTokens[i + 1];
             currentFunc = createFunctionDefinition(token, idToken);
             if (isNextTokenOfType(documentTokens, i, 2, TokenType.LeftParen)) {
