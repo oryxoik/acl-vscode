@@ -1,17 +1,15 @@
 import * as vscode from "vscode";
 import { provideSemanticTokens } from "./providers/semantic-token";
 import { provideCodeCompletion } from "./providers/completion";
-import { handleDocumentChange, handleDocumentOpen, handleExtensionActive } from "./token-mapper";
 import * as parser from "./parser/index";
 
 export function activate(context: vscode.ExtensionContext) {
-    console.log("extension activated");
-    // handleExtensionActive();
+    console.log("extension activated 2");
     onExtentionActive();
 
     context.subscriptions.push(
         vscode.workspace.onDidOpenTextDocument(onDocumentOpen),
-        vscode.workspace.onDidChangeTextDocument(handleDocumentChange),
+        vscode.workspace.onDidChangeTextDocument(onDocumentChange),
         provideSemanticTokens(),
         provideCodeCompletion()
     );

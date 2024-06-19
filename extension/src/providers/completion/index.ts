@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
+import * as parser from "../../parser/index";
 import { TokenType } from "../../lexer/TokenType";
 import { Token } from "../../lexer/Token";
-import { typeDefinitions } from "../../context-builder";
 import {
     findNearestLeftCurly,
     findNearestLine,
@@ -11,15 +11,12 @@ import {
     isInsideFunctionScope,
 } from "./utils";
 
-export var allTokens: Token[] = [];
-export var tokensMap: Map<number, Token[]> = new Map<number, Token[]>();
-
 export function provideCodeCompletion(): vscode.Disposable {
     return vscode.languages.registerCompletionItemProvider(
         { language: "acl" },
         {
             provideCompletionItems(document, position, token, context) {
-                var lineTokens = tokensMap.get(findNearestLine(position.line));
+                var lineTokens = parser.tokensMap.get(findNearestLine(position.line));
                 var lastTokenInLine = lineTokens[lineTokens.length - 1];
                 const LeftCurlyIndex = findNearestLeftCurly(lastTokenInLine);
                 const funcScopeInfo = isInsideFunctionScope(LeftCurlyIndex);
@@ -58,7 +55,7 @@ export function provideCodeCompletion(): vscode.Disposable {
                     if (nearestToken.type === TokenType.Dot) {
                         const prev = getPreviousToken(nearestToken);
                         if (prev.type === TokenType.Self) {
-                            typeDefinitions.forEach((types) => {
+                            parser.typeDefinitions.forEach((types) => {
                                 types.forEach((type) => {
                                     if (type.identifierToken === typeIdentifier) {
                                         found = true;
@@ -80,7 +77,7 @@ export function provideCodeCompletion(): vscode.Disposable {
                             const end = document.positionAt(prev.endIndex);
                             const typeName = document.getText(new vscode.Range(start, end));
 
-                            typeDefinitions.forEach((types) => {
+                            parser.typeDefinitions.forEach((types) => {
                                 types.forEach((type) => {
                                     if (type.typeToken.type === TokenType.Extension && type.identifierToken.lexeme === typeName) {
                                         found = true;
@@ -104,7 +101,7 @@ export function provideCodeCompletion(): vscode.Disposable {
                     }
 
                     if (!found) {
-                        typeDefinitions.forEach((types) => {
+                        parser.typeDefinitions.forEach((types) => {
                             types.forEach((type) => {
                                 if (
                                     type.typeToken.type !== TokenType.Component &&
@@ -153,22 +150,4 @@ export function provideCodeCompletion(): vscode.Disposable {
         },
         "."
     );
-}
-
-export function mapTokensByLine(tokens: Token[]) {
-    allTokens = tokens;
-    tokensMap = new Map<number, Token[]>();
-
-    let lastLine = -1;
-    let currentTokens: Token[] = [];
-    for (let i = 0; i < tokens.length; i++) {
-        const token = tokens[i];
-        if (lastLine != token.line) {
-            currentTokens = [];
-            lastLine = token.line;
-        }
-
-        currentTokens.push(token);
-        tokensMap.set(lastLine, currentTokens);
-    }
 }

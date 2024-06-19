@@ -1,6 +1,7 @@
 import { Token, createToken } from "./Token";
 import { TokenType } from "./TokenType";
 import keywords from "./keywords";
+import { isCharacterAlpha, isCharacterDigit, isCharacterAlphaNumeric } from "./lexer";
 
 /**
  * Tokenizes the given source code and returns an array of tokens.

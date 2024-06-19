@@ -4,6 +4,7 @@ import { createFunctionDefinition, createTypeDefinition, FunctionDefinition, try
 import tokenize from "../lexer/scanner";
 import { isNextTokenOfType, isPreviousTokenNotOfType, isPreviousTokenOfType, isTokenType } from "./utils";
 import { TokenType } from "../lexer/TokenType";
+import builtinTypes from "../builtin-types";
 
 /**
  * List of tokens in a document.
@@ -20,11 +21,16 @@ const tokens = new Map<vscode.Uri, Token[]>();
 const tokensMap = new Map<number, Token[]>();
 
 /**
+ * List of all tokens in the project
+ */
+var allTokens: Token[] = [];
+
+/**
  * Map of all the type definitions in the workspace (project)
  * Key is the URI (as string) of the document that the type definition is in
  * Value is an array of type definitions, so each document can have multiple type definitions
  */
-const typeDefinitions = new Map<string, TypeDefinition[]>();
+const typeDefinitions = new Map<string, TypeDefinition[]>([["built-in", builtinTypes]]);
 
 /**
  * List of all the type definitions in the workspace (project)
@@ -48,7 +54,7 @@ const updateTypeDefinitionsForDocument = (uri: vscode.Uri) => {
     var scopeDepth = 0;
 
     for (let i = 0; i < documentTokens.length; i++) {
-        const token = tokens[i];
+        const token = documentTokens[i];
 
         // type definition
         if (
@@ -161,6 +167,7 @@ const updateTokens = (uri: vscode.Uri, source: string) => {
     updateTypeDefinitionsForDocument(uri);
 
     tokens.forEach((ts) => {
+        allTokens = ts;
         mapTokensByLine(ts);
     });
 };
@@ -182,4 +189,4 @@ function mapTokensByLine(tokens: Token[]) {
     }
 }
 
-export { tokens, updateTokens };
+export { tokens, tokensMap, allTokens, typeDefinitions, allTypeDefinitions, updateTokens };

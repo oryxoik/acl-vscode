@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
-import { Token } from "../lexer/token";
+import { Token } from "../lexer/Token";
 import { TokenType } from "../lexer/TokenType";
-import { allTypeDefinitions, typeDefinitions } from "../context-builder";
 import types from "../builtin-types";
+import * as parser from "../parser/index";
 
 const tokenTypes = ["class", "function", "parameter", "variable", "property"];
 const tokenModifiers = ["declaration", "modification", "readonly", "static"];
@@ -13,10 +13,10 @@ export function provideSemanticTokens(): vscode.Disposable {
 
     const provider: vscode.DocumentSemanticTokensProvider = {
         provideDocumentSemanticTokens(document: vscode.TextDocument): vscode.ProviderResult<vscode.SemanticTokens> {
-            if (!typeDefinitions.has(document.uri.toString())) return;
+            if (!parser.typeDefinitions.has(document.uri.toString())) return;
 
             const tokensBuilder = new vscode.SemanticTokensBuilder(legend);
-            const definitions = typeDefinitions.get(document.uri.toString());
+            const definitions = parser.typeDefinitions.get(document.uri.toString());
 
             definitions.forEach((type) => {
                 if (types.includes(type)) return;
@@ -29,8 +29,8 @@ export function provideSemanticTokens(): vscode.Disposable {
 
                 type.callExpressions.forEach((callId) => {
                     var isTypeCreation = false;
-                    for (var i = 0; i < allTypeDefinitions.length; i++) {
-                        const tdm = allTypeDefinitions[i];
+                    for (var i = 0; i < parser.allTypeDefinitions.length; i++) {
+                        const tdm = parser.allTypeDefinitions[i];
                         if (
                             (tdm.typeToken.type === TokenType.Class || tdm.typeToken.type === TokenType.Extension) &&
                             callId.lexeme === tdm.identifierToken.lexeme
@@ -49,8 +49,8 @@ export function provideSemanticTokens(): vscode.Disposable {
 
                 type.memberAccesss.forEach((m) => {
                     var isExtension = false;
-                    for (var i = 0; i < allTypeDefinitions.length; i++) {
-                        const tdm = allTypeDefinitions[i];
+                    for (var i = 0; i < parser.allTypeDefinitions.length; i++) {
+                        const tdm = parser.allTypeDefinitions[i];
                         if (tdm.typeToken.type === TokenType.Extension && m.parent.lexeme === tdm.identifierToken.lexeme) {
                             isExtension = true;
                             break;
