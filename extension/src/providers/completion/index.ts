@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as parser from "../../parser/index";
+import * as builtinConstants from "../../builtin-constants";
 import { TokenType } from "../../lexer/TokenType";
 import { Token } from "../../lexer/Token";
 import {
@@ -100,6 +101,10 @@ export function provideCodeCompletion(): vscode.Disposable {
                         }
                     }
 
+                    if (constantInputKeys(nearestToken, items)) {
+                        found = true;
+                    }
+
                     if (!found) {
                         parser.typeDefinitions.forEach((types) => {
                             types.forEach((type) => {
@@ -150,4 +155,39 @@ export function provideCodeCompletion(): vscode.Disposable {
         },
         "."
     );
+}
+
+function constantInputKeys(nearestToken: Token, items: vscode.CompletionItem[]) {
+    const funcNames = ["GetKeyDown", "GetKeyUp", "GetKeyHold", "GetKeyName"];
+    const pushCompletionItems = (includeQuotes: boolean = true) => {
+        builtinConstants.inputKeys.forEach((key) => {
+            const item = new vscode.CompletionItem(key, vscode.CompletionItemKind.Constant);
+            if (includeQuotes) item.insertText = '"' + key + '"';
+            items.push(item);
+        });
+    };
+
+    if (nearestToken.type === TokenType.LeftParen) {
+        const prev = getPreviousToken(nearestToken);
+        if (prev.type === TokenType.Identifier && funcNames.includes(prev.lexeme)) {
+            pushCompletionItems();
+            return true;
+        }
+    } else if (nearestToken.type === TokenType.String) {
+        const prevA = getPreviousToken(nearestToken);
+        const prevB = getPreviousToken(prevA);
+        if (prevA.type === TokenType.LeftParen && prevB.type === TokenType.Identifier && funcNames.includes(prevB.lexeme)) {
+            pushCompletionItems(false);
+            return true;
+        }
+    } else if (nearestToken.type === TokenType.Identifier) {
+        const prevA = getPreviousToken(nearestToken);
+        const prevB = getPreviousToken(prevA);
+        if (prevA.type === TokenType.LeftParen && prevB.type === TokenType.Identifier && funcNames.includes(prevB.lexeme)) {
+            pushCompletionItems();
+            return true;
+        }
+    }
+
+    return false;
 }
