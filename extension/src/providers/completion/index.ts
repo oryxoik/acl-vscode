@@ -101,7 +101,7 @@ export function provideCodeCompletion(): vscode.Disposable {
                         }
                     }
 
-                    if (constantInputKeys(nearestToken, items)) {
+                    if (stringConstants(nearestToken, items)) {
                         found = true;
                     }
 
@@ -157,34 +157,34 @@ export function provideCodeCompletion(): vscode.Disposable {
     );
 }
 
-function constantInputKeys(nearestToken: Token, items: vscode.CompletionItem[]) {
-    const funcNames = ["GetKeyDown", "GetKeyUp", "GetKeyHold", "GetKeyName"];
-    const pushCompletionItems = (includeQuotes: boolean = true) => {
-        builtinConstants.inputKeys.forEach((key) => {
-            const item = new vscode.CompletionItem(key, vscode.CompletionItemKind.Constant);
-            if (includeQuotes) item.insertText = '"' + key + '"';
-            items.push(item);
-        });
-    };
-
-    if (nearestToken.type === TokenType.LeftParen) {
+function stringConstants(nearestToken: Token, items: vscode.CompletionItem[]) {
+    if (nearestToken.type === TokenType.String) {
         const prev = getPreviousToken(nearestToken);
-        if (prev.type === TokenType.Identifier && funcNames.includes(prev.lexeme)) {
-            pushCompletionItems();
-            return true;
-        }
-    } else if (nearestToken.type === TokenType.String) {
-        const prevA = getPreviousToken(nearestToken);
-        const prevB = getPreviousToken(prevA);
-        if (prevA.type === TokenType.LeftParen && prevB.type === TokenType.Identifier && funcNames.includes(prevB.lexeme)) {
-            pushCompletionItems(false);
-            return true;
-        }
-    } else if (nearestToken.type === TokenType.Identifier) {
-        const prevA = getPreviousToken(nearestToken);
-        const prevB = getPreviousToken(prevA);
-        if (prevA.type === TokenType.LeftParen && prevB.type === TokenType.Identifier && funcNames.includes(prevB.lexeme)) {
-            pushCompletionItems();
+        if (prev.type === TokenType.LeftParen || prev.type === TokenType.Comma) {
+            builtinConstants.inputKeys.forEach((key) => {
+                const label: vscode.CompletionItemLabel = {
+                    label: key,
+                    description: "Input Key",
+                };
+                const item = new vscode.CompletionItem(label, vscode.CompletionItemKind.Constant);
+                items.push(item);
+            });
+            builtinConstants.collideMode.forEach((key) => {
+                const label: vscode.CompletionItemLabel = {
+                    label: key,
+                    description: "CollideMode",
+                };
+                const item = new vscode.CompletionItem(label, vscode.CompletionItemKind.Constant);
+                items.push(item);
+            });
+            builtinConstants.collideWith.forEach((key) => {
+                const label: vscode.CompletionItemLabel = {
+                    label: key,
+                    description: "CollideWith",
+                };
+                const item = new vscode.CompletionItem(label, vscode.CompletionItemKind.Constant);
+                items.push(item);
+            });
             return true;
         }
     }

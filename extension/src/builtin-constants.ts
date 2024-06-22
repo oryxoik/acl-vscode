@@ -92,4 +92,7 @@ const inputKeys = [
     "MapEditor/SaveMap",
 ];
 
-export { inputKeys };
+const collideMode = ["Physical", "Region", "None"];
+const collideWith = ["All", "MapObjects", "Characters", "Projectiles", "Entities", "Hitboxes", "MapEditor"];
+
+export { inputKeys, collideMode, collideWith };
