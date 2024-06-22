@@ -163,26 +163,29 @@ function stringConstants(nearestToken: Token, items: vscode.CompletionItem[]) {
         if (prev.type === TokenType.LeftParen || prev.type === TokenType.Comma) {
             builtinConstants.inputKeys.forEach((key) => {
                 const label: vscode.CompletionItemLabel = {
-                    label: key,
-                    description: "Input Key",
+                    label: `KeyCode.${key}`,
+                    description: "KeyCode",
                 };
                 const item = new vscode.CompletionItem(label, vscode.CompletionItemKind.Constant);
+                item.insertText = key;
                 items.push(item);
             });
             builtinConstants.collideMode.forEach((key) => {
                 const label: vscode.CompletionItemLabel = {
-                    label: key,
+                    label: `CollideMode.${key}`,
                     description: "CollideMode",
                 };
                 const item = new vscode.CompletionItem(label, vscode.CompletionItemKind.Constant);
+                item.insertText = key;
                 items.push(item);
             });
             builtinConstants.collideWith.forEach((key) => {
                 const label: vscode.CompletionItemLabel = {
-                    label: key,
+                    label: `CollideWith.${key}`,
                     description: "CollideWith",
                 };
                 const item = new vscode.CompletionItem(label, vscode.CompletionItemKind.Constant);
+                item.insertText = key;
                 items.push(item);
             });
             return true;
