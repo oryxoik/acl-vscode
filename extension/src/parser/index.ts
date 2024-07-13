@@ -62,6 +62,9 @@ const updateTypeDefinitionsForDocument = (uri: vscode.Uri) => {
             isNextTokenOfType(documentTokens, i, 1, TokenType.Identifier)
         ) {
             const idToken = documentTokens[i + 1];
+            if (idToken.lexeme === "Main") {
+                token.type = TokenType.Extension;
+            }
             currentDef = createTypeDefinition(token, idToken);
             definitions.push(currentDef);
         }

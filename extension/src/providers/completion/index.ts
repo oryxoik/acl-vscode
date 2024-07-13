@@ -8,9 +8,11 @@ import {
     findNearestLine,
     findNearestPreviousToken,
     findTypeIdentifier,
+    getNextToken,
     getPreviousToken,
     isInsideFunctionScope,
 } from "./utils";
+import { builtinCallbacks } from "../../builtin-callbacks";
 
 export function provideCodeCompletion(): vscode.Disposable {
     return vscode.languages.registerCompletionItemProvider(
@@ -55,6 +57,7 @@ export function provideCodeCompletion(): vscode.Disposable {
                     let found = false;
                     if (nearestToken.type === TokenType.Dot) {
                         const prev = getPreviousToken(nearestToken);
+                        const next = getNextToken(nearestToken);
                         if (prev.type === TokenType.Self) {
                             parser.typeDefinitions.forEach((types) => {
                                 types.forEach((type) => {
@@ -67,6 +70,7 @@ export function provideCodeCompletion(): vscode.Disposable {
                                         });
                                         type.functions.forEach((func) => {
                                             const item = new vscode.CompletionItem(func.identifierToken.lexeme, vscode.CompletionItemKind.Function);
+                                            item.insertText = getFunctionInsertText(next, func.identifierToken.lexeme);
                                             items.push(item);
                                         });
                                     }
@@ -88,7 +92,11 @@ export function provideCodeCompletion(): vscode.Disposable {
                                             items.push(item);
                                         });
                                         type.functions.forEach((func) => {
+                                            if (typeName === "Main" && builtinCallbacks.includes(func.identifierToken.lexeme)) {
+                                                return;
+                                            }
                                             const item = new vscode.CompletionItem(func.identifierToken.lexeme, vscode.CompletionItemKind.Function);
+                                            item.insertText = getFunctionInsertText(next, func.identifierToken.lexeme);
                                             items.push(item);
                                         });
                                     }
@@ -96,13 +104,27 @@ export function provideCodeCompletion(): vscode.Disposable {
                             });
 
                             if (!found) {
+                                builtinConstants.stringConstants.forEach((constant) => {
+                                    if (constant.key === typeName) {
+                                        found = true;
+                                        items = [];
+
+                                        const sPos = document.positionAt(nearestToken.endIndex - typeName.length - 1);
+                                        const ePos = document.positionAt(nearestToken.endIndex + 1);
+                                        constant.values.forEach((value) => {
+                                            const item = new vscode.CompletionItem(value, vscode.CompletionItemKind.EnumMember);
+                                            item.insertText = `"${value}"`;
+                                            item.additionalTextEdits = [vscode.TextEdit.replace(new vscode.Range(sPos, ePos), "")];
+                                            items.push(item);
+                                        });
+                                    }
+                                });
+                            }
+
+                            if (!found) {
                                 return [];
                             }
                         }
-                    }
-
-                    if (stringConstants(nearestToken, items)) {
-                        found = true;
                     }
 
                     if (!found) {
@@ -112,7 +134,6 @@ export function provideCodeCompletion(): vscode.Disposable {
                                     type.typeToken.type !== TokenType.Component &&
                                     type.typeToken.type !== TokenType.Cutscene &&
                                     type.identifierToken.lexeme !== typeIdentifier.lexeme &&
-                                    type.identifierToken.lexeme !== "Main" &&
                                     type.identifierToken.lexeme !== "Vector3" &&
                                     type.identifierToken.lexeme !== "Quaternion"
                                 ) {
@@ -135,7 +156,7 @@ export function provideCodeCompletion(): vscode.Disposable {
                                     });
                                     type.functions.forEach((func) => {
                                         const item = new vscode.CompletionItem(func.identifierToken.lexeme, vscode.CompletionItemKind.Function);
-                                        item.insertText = `self.${func.identifierToken.lexeme}`;
+                                        item.insertText = new vscode.SnippetString(`self.${func.identifierToken.lexeme}($0);`);
                                         items.push(item);
 
                                         if (func.identifierToken === funcScopeInfo.idToken) {
@@ -147,6 +168,10 @@ export function provideCodeCompletion(): vscode.Disposable {
                                 }
                             });
                         });
+
+                        builtinConstants.stringConstants.forEach((constant) => {
+                            items.push(new vscode.CompletionItem(constant.key, vscode.CompletionItemKind.Enum));
+                        });
                     }
                 }
 
@@ -157,40 +182,10 @@ export function provideCodeCompletion(): vscode.Disposable {
     );
 }
 
-function stringConstants(nearestToken: Token, items: vscode.CompletionItem[]) {
-    if (nearestToken.type === TokenType.String) {
-        const prev = getPreviousToken(nearestToken);
-        if (prev.type === TokenType.LeftParen || prev.type === TokenType.Comma) {
-            builtinConstants.inputKeys.forEach((key) => {
-                const label: vscode.CompletionItemLabel = {
-                    label: `KeyCode.${key}`,
-                    description: "KeyCode",
-                };
-                const item = new vscode.CompletionItem(label, vscode.CompletionItemKind.Constant);
-                item.insertText = key;
-                items.push(item);
-            });
-            builtinConstants.collideMode.forEach((key) => {
-                const label: vscode.CompletionItemLabel = {
-                    label: `CollideMode.${key}`,
-                    description: "CollideMode",
-                };
-                const item = new vscode.CompletionItem(label, vscode.CompletionItemKind.Constant);
-                item.insertText = key;
-                items.push(item);
-            });
-            builtinConstants.collideWith.forEach((key) => {
-                const label: vscode.CompletionItemLabel = {
-                    label: `CollideWith.${key}`,
-                    description: "CollideWith",
-                };
-                const item = new vscode.CompletionItem(label, vscode.CompletionItemKind.Constant);
-                item.insertText = key;
-                items.push(item);
-            });
-            return true;
-        }
+function getFunctionInsertText(nextToken: Token, name: string) {
+    if (nextToken !== null && nextToken.type === TokenType.LeftParen) {
+        return name;
     }
 
-    return false;
+    return new vscode.SnippetString(`${name}($0);`);
 }

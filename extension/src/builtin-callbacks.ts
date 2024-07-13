@@ -1,0 +1,17 @@
+export const builtinCallbacks = [
+    "Init",
+    "OnGameStart",
+    "OnTick",
+    "OnFrame",
+    "OnLateFrame",
+    "OnSecond",
+    "OnChatInput",
+    "OnPlayerSpawn",
+    "OnCharacterSpawn",
+    "OnCharacterDie",
+    "OnCharacterDamaged",
+    "OnPlayerJoin",
+    "OnPlayerLeave",
+    "OnNetworkMessage",
+    "OnButtonClick",
+];

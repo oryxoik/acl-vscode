@@ -8,6 +8,12 @@ export function getPreviousToken(currentToken: Token): Token {
     return parser.allTokens[i - 1];
 }
 
+export function getNextToken(currentToken: Token): Token {
+    const i = parser.allTokens.indexOf(currentToken);
+    if (i + 1 >= parser.allTokens.length) return null;
+    return parser.allTokens[i + 1];
+}
+
 export function findNearestLeftCurly(currentToken: Token): number {
     let currentIndex = parser.allTokens.indexOf(currentToken);
     let ignoreCount = 0;
