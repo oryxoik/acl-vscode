@@ -110,7 +110,7 @@ export function provideCodeCompletion(): vscode.Disposable {
                                         items = [];
 
                                         const sPos = document.positionAt(nearestToken.endIndex - typeName.length - 1);
-                                        const ePos = document.positionAt(nearestToken.endIndex + 1);
+                                        const ePos = document.positionAt(nearestToken.endIndex);
                                         constant.values.forEach((value) => {
                                             const item = new vscode.CompletionItem(value, vscode.CompletionItemKind.EnumMember);
                                             item.insertText = `"${value}"`;
